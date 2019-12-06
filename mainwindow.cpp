@@ -39,7 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
     sysBusConnect("/org/freedesktop/ModemManager1", "org.freedesktop.DBus.ObjectManager", "InterfacesAdded", SLOT(addModem(const QDBusObjectPath&)));
     sysBusConnect("/org/freedesktop/ModemManager1", "org.freedesktop.DBus.ObjectManager", "InterfacesRemoved", SLOT(removeModem(const QDBusObjectPath&)));
 
-    connect(ui->categories, SIGNAL(itemActivated(QTreeWidgetItem*, int)), this, SLOT(selectSMS()));
+    connect(ui->categories, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(selectSMS()));
 
     connect(ui->buttonDel, SIGNAL(clicked()), this, SLOT(onDeleteClicked()));
     connect(ui->buttonReply, SIGNAL(clicked()), this, SLOT(onReplyClicked()));
