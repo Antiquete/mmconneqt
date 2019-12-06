@@ -20,9 +20,7 @@
 
 #include "composer.h"
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
     this->ui->cbStorageMT->setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -87,7 +85,7 @@ void MainWindow::selectModem(int index)
 }
 void MainWindow::clearInfo()
 {
-    QList<QLabel*> labels = ui->tab_modem->findChildren<QLabel*>(QRegExp("lblProp_.*"));
+    QList<QLabel*> labels = ui->tab_modem->findChildren<QLabel*>(QRegularExpression("lblProp_.*"));
     for(const auto& l:labels)
     {
         l->setText("None");
@@ -137,7 +135,7 @@ void MainWindow::updateInfo()
     QString op = ui->modemSelector->currentData().value<QString>();
     Keys k = Keys({"-m", op});
 
-    QList<QLabel*> labels = ui->tabWidget->findChildren<QLabel*>(QRegExp("lblProp_.*"));
+    QList<QLabel*> labels = ui->tabWidget->findChildren<QLabel*>(QRegularExpression("lblProp_.*"));
     for(const auto& l:labels)
     {
         QString lkey = l->property("Key").value<QString>();
@@ -268,10 +266,8 @@ void MainWindow::selectSMS()
         {
             ui->buttonDel->setText("Delete");
 
-            if(it->parent()->text(0) == "Inbox")
-                ui->buttonReply->setEnabled(true);
-            else if(it->parent()->text(0) == "Drafts")
-                ui->buttonSend->setEnabled(true);
+            if(it->parent()->text(0) == "Inbox") ui->buttonReply->setEnabled(true);
+            else if(it->parent()->text(0) == "Drafts") ui->buttonSend->setEnabled(true);
 
             Keys k = Keys({"-s", it->text(1)});
             ui->smsc->setText(k.get("sms.properties.smsc"));

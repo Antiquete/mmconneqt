@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>909</width>
+    <width>1076</width>
     <height>725</height>
    </rect>
   </property>
@@ -1535,6 +1535,9 @@
                       <widget class="QTimeEdit" name="smsTime">
                        <property name="alignment">
                         <set>Qt::AlignCenter</set>
+                       </property>
+                       <property name="readOnly">
+                        <bool>true</bool>
                        </property>
                        <property name="buttonSymbols">
                         <enum>QAbstractSpinBox::NoButtons</enum>
