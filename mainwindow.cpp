@@ -276,16 +276,14 @@ void MainWindow::selectSMS()
             Keys k = Keys({"-s", it->text(1)});
             ui->smsc->setText(k.get("sms.properties.smsc"));
             QString stime = k.get("sms.properties.timestamp");
-            QString yy = stime.left(2);
-            QString mm = stime.mid(2,2);
-            QString dd = stime.mid(4,2);
-            QString hh = stime.mid(6,2);
-            QString ii = stime.mid(8,2);
-            QString ss = stime.mid(10,2);
-            QString yprefix = QString::number(QDate::currentDate().year()).left(2);
 
-            QTime time = QTime::fromString(hh + ":" + ii + ":" + ss, "hh:mm:ss");
-            QDate date = QDate::fromString(dd + "/" + mm + "/" + yprefix + yy, "dd/MM/yyyy");
+            QStringList dateTimeZone = {"    -  -  ", "  :  :  ", "00:00"};
+            if(stime != "--") dateTimeZone = stime.split(QRegExp("\\T|\\+"));
+
+            QDate date = QDate::fromString(dateTimeZone[0], "yyyy-MM-dd");
+            QTime time = QTime::fromString(dateTimeZone[1], "hh:mm:ss");
+
+            // TODO: Put in code for time zone
 
             ui->smsTime->setTime(time);
             ui->smsDate->setDate(date);
