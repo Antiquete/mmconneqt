@@ -25,6 +25,7 @@
 #include <QDateTime>
 #include <QMessageBox>
 #include <QSystemTrayIcon>
+#include <QSettings>
 
 #include "core.h"
 
@@ -43,6 +44,8 @@ public:
 private:
     Ui::MainWindow *ui;
 
+    QSettings settings;
+
     QDBusConnection sysBus = QDBusConnection::systemBus();
 
     QString connectedModem = "";
@@ -52,6 +55,10 @@ private:
     QDBusInterface *Modem, *Messaging, *Sim;
 
     void listModems();
+
+    bool isRead(QString);
+    void markRead(QString);
+    void markUnread(QString);
 
 private slots:
     void addModem(const QDBusObjectPath&);

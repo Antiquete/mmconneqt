@@ -22,6 +22,7 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
+
     ui->setupUi(this);
     this->ui->cbStorageMT->setAttribute(Qt::WA_TransparentForMouseEvents);
     this->ui->cbStorageMT->setFocusPolicy(Qt::NoFocus);
@@ -270,6 +271,10 @@ void MainWindow::selectSMS()
             else if(it->parent()->text(0) == "Drafts") ui->buttonSend->setEnabled(true);
 
             Keys k = Keys({"-s", it->text(1)});
+
+            markRead(it->text(1));
+            it->setForeground(0, QBrush());
+
             ui->smsc->setText(k.get("sms.properties.smsc"));
             QString stime = k.get("sms.properties.timestamp");
 
@@ -312,8 +317,8 @@ void MainWindow::addSMS(QString sms, bool notifyRecieved, bool append)
 {
     Keys k = Keys({"-s", sms});
 
-    QTreeWidgetItem* it = new QTreeWidgetItem({k.get("sms.content.number")});
-    it->setText(1, sms);
+    QTreeWidgetItem* it = new QTreeWidgetItem({k.get("sms.content.number"), sms});
+    if(!isRead(sms)) it->setForeground(0, QBrush(Qt::red));
 
     QString type = k.get("sms.properties.pdu-type");
     QString state = k.get("sms.properties.state");
@@ -338,6 +343,18 @@ void MainWindow::addSMS(QString sms, bool notifyRecieved, bool append)
         parent->addChild(it);
     else
         parent->insertChild(0, it);
+}
+bool MainWindow::isRead(QString sms)
+{
+    return settings.value(sms, false).toBool();
+}
+void MainWindow::markRead(QString sms)
+{
+    settings.setValue(sms, true);
+}
+void MainWindow::markUnread(QString sms)
+{
+    settings.remove(sms);
 }
 void MainWindow::newSMS(const QDBusObjectPath& op)
 {
@@ -374,6 +391,7 @@ void MainWindow::onDeleteClicked()
             if(!it->parent())
                 return;
             Keys({"-m", ui->modemSelector->currentData().value<QString>(), "--messaging-delete-sms="+it->text(1)});
+            markUnread(it->text(1));
             it->parent()->removeChild(it);
         }
     }
