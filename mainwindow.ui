@@ -1454,6 +1454,11 @@
                   <string>Unknown</string>
                  </property>
                 </item>
+                <item>
+                 <property name="text">
+                  <string>Autodeletes</string>
+                 </property>
+                </item>
                </widget>
               </item>
               <item>
@@ -1477,6 +1482,19 @@
                       <widget class="QLineEdit" name="from">
                        <property name="readOnly">
                         <bool>true</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="buttonAutoDelete">
+                       <property name="enabled">
+                        <bool>true</bool>
+                       </property>
+                       <property name="toolTip">
+                        <string>Auto delete messages from this number.</string>
+                       </property>
+                       <property name="text">
+                        <string>Auto Delete</string>
                        </property>
                       </widget>
                      </item>

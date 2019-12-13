@@ -54,11 +54,19 @@ private:
 
     QDBusInterface *Modem, *Messaging, *Sim;
 
+    void listAutodeletes();
+
     void listModems();
 
-    bool isRead(QString);
-    void markRead(QString);
-    void markUnread(QString);
+    bool isRead(QString sms);
+    void markRead(QString sms);
+    void markUnread(QString sms);
+
+    bool isSetToAutodelete(QString num);
+    void markForAutodelete(QString num);
+    void unmarkFromAutodelete(QString num);
+
+    void deleteSMS(QTreeWidgetItem*);
 
 private slots:
     void addModem(const QDBusObjectPath&);
@@ -82,6 +90,7 @@ private slots:
     void onReplyClicked();
     void onSendClicked();
     void onNewClicked();
+    void onAutoDeleteClicked();
 
     void notify(QString, QString);
 

@@ -74,6 +74,11 @@ public:
     {
         return KeyPairs;
     }
+
+    static void mmDeleteSMS(QString modem, QString sms)
+    {
+        Keys({"-m", modem, "--messaging-delete-sms="+sms});
+    }
 };
 
 #endif // CORE_H

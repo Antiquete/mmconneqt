@@ -32,18 +32,20 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
     ui->rbProp_cdma->setAttribute(Qt::WA_TransparentForMouseEvents);
     ui->categories->setColumnHidden(1,true);
 
+    listAutodeletes();
     listModems();
     selectModem(ui->modemSelector->count()-1);
     connect(ui->modemSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(selectModem(int)));
     sysBusConnect("/org/freedesktop/ModemManager1", "org.freedesktop.DBus.ObjectManager", "InterfacesAdded", SLOT(addModem(const QDBusObjectPath&)));
     sysBusConnect("/org/freedesktop/ModemManager1", "org.freedesktop.DBus.ObjectManager", "InterfacesRemoved", SLOT(removeModem(const QDBusObjectPath&)));
 
-    connect(ui->categories, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(selectSMS()));
+    connect(ui->categories, SIGNAL(itemPressed(QTreeWidgetItem*, int)), this, SLOT(selectSMS()));
 
     connect(ui->buttonDel, SIGNAL(clicked()), this, SLOT(onDeleteClicked()));
     connect(ui->buttonReply, SIGNAL(clicked()), this, SLOT(onReplyClicked()));
     connect(ui->buttonSend, SIGNAL(clicked()), this, SLOT(onSendClicked()));
     connect(ui->buttonNew, SIGNAL(clicked()), this, SLOT(onNewClicked()));
+    connect(ui->buttonAutoDelete, SIGNAL(clicked()), this, SLOT(onAutoDeleteClicked()));
 
     ico = new QIcon(":/icon.png");
     sysIco = new QSystemTrayIcon(*ico);
@@ -56,6 +58,20 @@ MainWindow::~MainWindow()
     exit(0);
 }
 
+
+void MainWindow::listAutodeletes()
+{
+    QStringList autodeleteList = settings.value("autodelete", QStringList()).toStringList();
+
+    if(!autodeleteList.empty())
+    {
+        ui->categories->topLevelItem(4)->takeChildren();
+        foreach (QString autodelete, autodeleteList)
+        {
+            ui->categories->topLevelItem(4)->addChild(new QTreeWidgetItem({autodelete}));
+        }
+    }
+}
 
 void MainWindow::listModems()
 {
@@ -238,25 +254,43 @@ void MainWindow::removeModem(const QDBusObjectPath& op)
 }
 void MainWindow::selectSMS()
 {
-    if(!ui->buttonDel->isEnabled())
-        ui->buttonDel->setEnabled(true);
-    if(ui->buttonReply->isEnabled())
-        ui->buttonReply->setEnabled(false);
-    if(ui->buttonSend->isEnabled())
-        ui->buttonSend->setEnabled(false);
+    if(!ui->buttonDel->isEnabled()) ui->buttonDel->setEnabled(true);
+    if(ui->buttonReply->isEnabled()) ui->buttonReply->setEnabled(false);
+    if(ui->buttonSend->isEnabled()) ui->buttonSend->setEnabled(false);
+    if(ui->buttonAutoDelete->isEnabled()) ui->buttonAutoDelete->setVisible(false);
 
     ui->cbStorageMT->setCheckState(Qt::Unchecked);
     ui->cbStorageSim->setCheckState(Qt::Unchecked);
     ui->smsTime->setTime(ui->smsTime->minimumTime());
     ui->smsDate->setDate(ui->smsDate->minimumDate());
     ui->smsc->clear();
+    ui->from->clear();
+    ui->smsContent->clear();
+
+
+
+    //Handle Autodeletes
+    QTreeWidgetItem *lastSelected = ui->categories->selectedItems().last();
+    if(lastSelected->parent() == ui->categories->topLevelItem(4) || lastSelected == ui->categories->topLevelItem(4))
+    {
+        ui->categories->clearSelection();
+
+        if(lastSelected->parent())
+        {
+            lastSelected->setSelected(true);
+            ui->from->setText(lastSelected->text(0));
+            ui->buttonDel->setText("Delete Autodelete");
+        }
+        return;
+    }
+
 
     QList<QTreeWidgetItem*> itms = ui->categories->selectedItems();
     if(itms.count() > 1)
     {
         ui->buttonDel->setText("Delete Multiple ["+QString::number(itms.count())+" Messages]");
     }
-    else
+    else if(itms.count() == 1)
     {
         QTreeWidgetItem* it = itms.first();
         if(!it->parent())
@@ -267,7 +301,11 @@ void MainWindow::selectSMS()
         {
             ui->buttonDel->setText("Delete");
 
-            if(it->parent()->text(0) == "Inbox") ui->buttonReply->setEnabled(true);
+            if(it->parent()->text(0) == "Inbox")
+            {
+                ui->buttonReply->setEnabled(true);
+                ui->buttonAutoDelete->setVisible(true);
+            }
             else if(it->parent()->text(0) == "Drafts") ui->buttonSend->setEnabled(true);
 
             Keys k = Keys({"-s", it->text(1)});
@@ -289,6 +327,10 @@ void MainWindow::selectSMS()
             ui->smsTime->setTime(time);
             ui->smsDate->setDate(date);
         }
+    }
+    else
+    {
+        return;
     }
 
     QStringList nums, texts;
@@ -316,6 +358,12 @@ void MainWindow::selectSMS()
 void MainWindow::addSMS(QString sms, bool notifyRecieved, bool append)
 {
     Keys k = Keys({"-s", sms});
+
+    if(isSetToAutodelete(k.get("sms.content.number")))
+    {
+        Keys::mmDeleteSMS(ui->modemSelector->currentData().value<QString>(), sms);
+        return;
+    }
 
     QTreeWidgetItem* it = new QTreeWidgetItem({k.get("sms.content.number"), sms});
     if(!isRead(sms)) it->setForeground(0, QBrush(Qt::red));
@@ -356,6 +404,25 @@ void MainWindow::markUnread(QString sms)
 {
     settings.remove(sms);
 }
+bool MainWindow::isSetToAutodelete(QString num)
+{
+    QStringList autodeleteList = settings.value("autodelete", QStringList()).toStringList();
+    return autodeleteList.contains(num);
+}
+void MainWindow::markForAutodelete(QString num)
+{
+    QStringList autodeleteList = settings.value("autodelete", QStringList()).toStringList();
+    autodeleteList << num;
+    settings.setValue("autodelete", autodeleteList);
+    updateSMS();
+    listAutodeletes();
+}
+void MainWindow::unmarkFromAutodelete(QString num)
+{
+    QStringList autodeleteList = settings.value("autodelete", QStringList()).toStringList();
+    autodeleteList.removeOne(num);
+    settings.setValue("autodelete", autodeleteList);
+}
 void MainWindow::newSMS(const QDBusObjectPath& op)
 {
     QString sms = op.path();
@@ -376,23 +443,31 @@ void MainWindow::onDeleteClicked()
 {
     if(ui->categories->selectedItems().count() == 1 && !ui->categories->selectedItems().first()->parent())
     {
+        // Category Selected
         QTreeWidgetItem* parent = ui->categories->selectedItems().first();
         while(parent->childCount() != 0)
         {
-            Keys({"-m", ui->modemSelector->currentData().value<QString>(), "--messaging-delete-sms="+parent->child(0)->text(1)});
-            parent->removeChild(parent->child(0));
+            deleteSMS(parent->child(0));
         }
+    }
+    else if(ui->categories->selectedItems().count() == 1 && ui->categories->selectedItems().first()->parent() == ui->categories->topLevelItem(4))
+    {
+        // Autodelete Selected
+        QTreeWidgetItem *it = ui->categories->selectedItems().first();
+        unmarkFromAutodelete(it->text(0));
+        it->parent()->removeChild(it);
     }
     else
     {
+        // SMS(s) selected
         QList<QTreeWidgetItem*> itms = ui->categories->selectedItems();
         for(const auto& it:itms)
         {
-            if(!it->parent())
+            // Ignore in case a category or part of autodeletes
+            if(!it->parent() || it->parent() == ui->categories->topLevelItem(4))
                 return;
-            Keys({"-m", ui->modemSelector->currentData().value<QString>(), "--messaging-delete-sms="+it->text(1)});
-            markUnread(it->text(1));
-            it->parent()->removeChild(it);
+
+            deleteSMS(it);
         }
     }
 }
@@ -416,6 +491,10 @@ void MainWindow::onNewClicked()
     connect(cw, SIGNAL(saveSMS(QString,QString)), this, SLOT(saveSMS(QString, QString)));
     cw->show();
 }
+void MainWindow::onAutoDeleteClicked()
+{
+    markForAutodelete(ui->categories->selectedItems().first()->text(0));
+}
 void MainWindow::sendSMS(QString number, QString text)
 {
     QStringList args;
@@ -432,6 +511,12 @@ void MainWindow::saveSMS(QString number, QString text)
     args << ui->modemSelector->currentData().value<QString>();
     args << "--messaging-create-sms=""text='" + text + "',number='" + number + "'""";
     Keys(args).get("Successfully created new SMS");
+}
+void MainWindow::deleteSMS(QTreeWidgetItem *it)
+{
+    Keys::mmDeleteSMS(ui->modemSelector->currentData().value<QString>(), it->text(1));
+    markUnread(it->text(1));
+    it->parent()->removeChild(it);
 }
 void MainWindow::notify(QString title, QString msg)
 {
