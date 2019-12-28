@@ -15,37 +15,34 @@
 // You should have received a copy of the GNU General Public License
 // along with MMconneqt.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef COMPOSER_H
-#define COMPOSER_H
+#ifndef AUTODELETES_H
+#define AUTODELETES_H
 
 #include <QDialog>
-#include <QPushButton>
+
+#include "core.h"
 
 namespace Ui {
-class composer;
+class Autodeletes;
 }
 
-class composer : public QDialog
+class Autodeletes : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit composer(QWidget *parent = nullptr);
-    ~composer();
+    explicit Autodeletes(QWidget *parent = nullptr);
+    ~Autodeletes();
 
-    void setNumber(QString);
-    void setMessage(QString);
-    void focusMessage();
+public slots:
+    void update();
+    void showUpdated();
 
 private:
-    Ui::composer *gui;
+    Ui::Autodeletes *ui;
 
 private slots:
-    void process(QAbstractButton*);
-
-signals:
-    void sendSMS(QString, QString);
-    void saveSMS(QString, QString);
+    void removeSelected();
 };
 
-#endif // COMPOSER_H
+#endif // AUTODELETES_H

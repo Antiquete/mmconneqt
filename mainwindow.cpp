@@ -18,507 +18,268 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include "composer.h"
-
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
 
     ui->setupUi(this);
-    this->ui->cbStorageMT->setAttribute(Qt::WA_TransparentForMouseEvents);
-    this->ui->cbStorageMT->setFocusPolicy(Qt::NoFocus);
-    this->ui->cbStorageSim->setAttribute(Qt::WA_TransparentForMouseEvents);
-    this->ui->cbStorageSim->setFocusPolicy(Qt::NoFocus);
-    ui->rbProp_3gpp->setAttribute(Qt::WA_TransparentForMouseEvents);
-    ui->rbProp_cdma->setAttribute(Qt::WA_TransparentForMouseEvents);
-    ui->categories->setColumnHidden(1,true);
 
-    listAutodeletes();
-    listModems();
-    selectModem(ui->modemSelector->count()-1);
-    connect(ui->modemSelector, SIGNAL(currentIndexChanged(int)), this, SLOT(selectModem(int)));
-    sysBusConnect("/org/freedesktop/ModemManager1", "org.freedesktop.DBus.ObjectManager", "InterfacesAdded", SLOT(addModem(const QDBusObjectPath&)));
-    sysBusConnect("/org/freedesktop/ModemManager1", "org.freedesktop.DBus.ObjectManager", "InterfacesRemoved", SLOT(removeModem(const QDBusObjectPath&)));
+    // Connections: ModemLister -> MainWindow
+    connect(ui->modemSelector, SIGNAL(modemLoaded(Modem*)), this, SLOT(infoUpdate(Modem*)));
+    connect(ui->modemSelector, SIGNAL(modemUnloaded()),     this, SLOT(infoClear()));
 
-    connect(ui->categories, SIGNAL(itemPressed(QTreeWidgetItem*, int)), this, SLOT(selectSMS()));
+    // Connections: ModemLister -> SMSLister
+    connect(ui->modemSelector, SIGNAL(modemLoaded(Modem*)), ui->smsSelecter, SLOT(setModem(Modem*)));
+    connect(ui->modemSelector, SIGNAL(modemUnloaded()),     ui->smsSelecter, SLOT(clearMessages()));
 
-    connect(ui->buttonDel, SIGNAL(clicked()), this, SLOT(onDeleteClicked()));
-    connect(ui->buttonReply, SIGNAL(clicked()), this, SLOT(onReplyClicked()));
-    connect(ui->buttonSend, SIGNAL(clicked()), this, SLOT(onSendClicked()));
-    connect(ui->buttonNew, SIGNAL(clicked()), this, SLOT(onNewClicked()));
-    connect(ui->buttonAutoDelete, SIGNAL(clicked()), this, SLOT(onAutoDeleteClicked()));
+    // Connections: SMSLister -> MainWindow
+    connect(ui->smsSelecter, SIGNAL(smsSelected(SMS*)),             this, SLOT(smsLoad(SMS*)));
+    connect(ui->smsSelecter, SIGNAL(multiSelected(QList<SMS*>)),    this, SLOT(smsMultiLoad(QList<SMS*>)));
+    connect(ui->smsSelecter, SIGNAL(filterSelected(SMSFilter)),     this, SLOT(clearViewer()));
+    connect(ui->smsSelecter, SIGNAL(smsSelected(SMS*)),             this, SLOT(onSMSSingleSelect(SMS*)));
+    connect(ui->smsSelecter, SIGNAL(multiSelected(QList<SMS*>)),    this, SLOT(onSMSMultiSelect(QList<SMS*>)));
+    connect(ui->smsSelecter, SIGNAL(filterSelected(SMSFilter)),     this, SLOT(onSMSFilterSelect(SMSFilter)));
 
-    ico = new QIcon(":/icon.png");
-    sysIco = new QSystemTrayIcon(*ico);
-    sysIco->show();
+    // Connections: Composer -> SMSLister
+    connect(cw, SIGNAL(sendSMS(QString,QString)), ui->smsSelecter, SLOT(saveSendSMS(QString, QString)));
+    connect(cw, SIGNAL(saveSMS(QString,QString)), ui->smsSelecter, SLOT(saveSMS(QString, QString)));
+
+    // Connections: Buttons
+    connect(ui->buttonNew,      SIGNAL(clicked()), cw,              SLOT(show()));
+    connect(ui->buttonSend,     SIGNAL(clicked()), this,            SLOT(onSendClicked()));
+    connect(ui->buttonReply,    SIGNAL(clicked()), this,            SLOT(onReplyClicked()));
+    connect(ui->buttonResend,   SIGNAL(clicked()), this,            SLOT(onResendClicked()));
+    connect(ui->buttonDel,      SIGNAL(clicked()), ui->smsSelecter, SLOT(deleteSelection()));
+    connect(ui->buttonAutoDel,  SIGNAL(clicked()), this,            SLOT(onAutoDelClicked()));
+    connect(ui->buttonAutoDel,  SIGNAL(clicked()), aw,              SLOT(update()));
+    connect(ui->buttonView,     SIGNAL(clicked()), aw,              SLOT(showUpdated()));
+
+    // Select a modem
+    ui->modemSelector->setDefaultModem();
 }
-
 MainWindow::~MainWindow()
 {
+    delete sysIco;
     delete ui;
-    exit(0);
+}
+void MainWindow::initUi()
+{
+    this->ui->cbStorageME->setAttribute(Qt::WA_TransparentForMouseEvents);
+    this->ui->cbStorageME->setFocusPolicy(Qt::NoFocus);
+    this->ui->cbStorageSM->setAttribute(Qt::WA_TransparentForMouseEvents);
+    this->ui->cbStorageSM->setFocusPolicy(Qt::NoFocus);
+    ui->rbProp_3gpp->setAttribute(Qt::WA_TransparentForMouseEvents);
+    ui->rbProp_cdma->setAttribute(Qt::WA_TransparentForMouseEvents);
 }
 
-
-void MainWindow::listAutodeletes()
+// Tab Info
+void MainWindow::infoUpdate(Modem *m)
 {
-    QStringList autodeleteList = settings.value("autodelete", QStringList()).toStringList();
-
-    if(!autodeleteList.empty())
+    QList<Propui*> labels = ui->tab_info->findChildren<Propui*>();
+    for(const auto& lbl:labels)
     {
-        ui->categories->topLevelItem(4)->takeChildren();
-        foreach (QString autodelete, autodeleteList)
-        {
-            ui->categories->topLevelItem(4)->addChild(new QTreeWidgetItem({autodelete}));
-        }
-    }
-}
-
-void MainWindow::listModems()
-{
-    Keys k = Keys({"-L"});
-    QStringList modems = k.getStack("modem-list");
-    for(const auto& it:modems)
-    {
-        ui->modemSelector->addItem(Keys({"-m", it}).get("modem.generic.model"), it);
-    }
-}
-void MainWindow::selectModem(int index)
-{
-    if(sender() != ui->modemSelector)
-        ui->modemSelector->setCurrentIndex(index);
-
-    if(index == 0)
-    {
-        clearInfo();
-        clearSMS();
-    }
-    else
-    {
-        updateInterfaces();
-        updateInfo();
-        updateSMS();
-        updateConnections();
-    }
-}
-void MainWindow::clearInfo()
-{
-    QList<QLabel*> labels = ui->tab_modem->findChildren<QLabel*>(QRegularExpression("lblProp_.*"));
-    for(const auto& l:labels)
-    {
-        l->setText("None");
-    }
-}
-void MainWindow::clearSMS()
-{
-    QList<QTreeWidgetItem*> itms = ui->categories->topLevelItem(0)->takeChildren();
-    for(const auto& it:itms)
-    {
-        sysBusDisconnect(it->text(1), "org.freedesktop.DBus.Properties", "PropertiesChanged", SLOT(updateSMS()));
-    }
-    itms = ui->categories->topLevelItem(1)->takeChildren();
-    for(const auto& it:itms)
-    {
-        sysBusDisconnect(it->text(1), "org.freedesktop.DBus.Properties", "PropertiesChanged", SLOT(updateSMS()));
-    }
-    itms = ui->categories->topLevelItem(2)->takeChildren();
-    for(const auto& it:itms)
-    {
-        sysBusDisconnect(it->text(1), "org.freedesktop.DBus.Properties", "PropertiesChanged", SLOT(updateSMS()));
-    }
-    itms = ui->categories->topLevelItem(3)->takeChildren();
-    for(const auto& it:itms)
-    {
-        sysBusDisconnect(it->text(1), "org.freedesktop.DBus.Properties", "PropertiesChanged", SLOT(updateSMS()));
+        lbl->set(m);
     }
 
-    ui->from->clear();
-    ui->cbStorageMT->setCheckState(Qt::Unchecked);
-    ui->cbStorageSim->setCheckState(Qt::Unchecked);
-    ui->smsc->setText("None");
-    ui->smsContent->clear();
-}
-void MainWindow::updateInterfaces()
-{
-    if(Modem == nullptr)
-        delete  Modem;
-    Modem = new QDBusInterface("org.freedesktop.ModemManager1", ui->modemSelector->currentData().value<QString>(), "org.freedesktop.ModemManager1.Modem", QDBusConnection::systemBus());
-
-    if(Messaging == nullptr)
-        delete Messaging;
-    Messaging = new QDBusInterface("org.freedesktop.ModemManager1", ui->modemSelector->currentData().value<QString>(), "org.freedesktop.ModemManager1.Modem.Messaging", QDBusConnection::systemBus());
-}
-void MainWindow::updateInfo()
-{
-    QString op = ui->modemSelector->currentData().value<QString>();
-    Keys k = Keys({"-m", op});
-
-    QList<QLabel*> labels = ui->tabWidget->findChildren<QLabel*>(QRegularExpression("lblProp_.*"));
-    for(const auto& l:labels)
-    {
-        QString lkey = l->property("Key").value<QString>();
-        bool larrayed = l->property("isKeyArrayed").value<bool>();
-        if(lkey != "")
-        {
-            if(lkey.contains(","))
-            {
-                QStringList ltexts;
-                QStringList lparts = lkey.split(",");
-                for(const auto& lp:lparts)
-                {
-                    QStringList lsp = lp.split(":");
-                    if(lsp.count() == 2)
-                    {
-                        if(larrayed)
-                            lsp[1] = k.getStack(lsp[1]).join(", ");
-                        else
-                            lsp[1] = k.get(lsp[1]);
-                        ltexts << lsp.join(": ");
-                    }
-                    else
-                    {
-                        if(larrayed)
-                            ltexts << k.getStack(lsp[0]).join(", ");
-                        else
-                            ltexts << k.get(lsp[0]);
-                    }
-                }
-                l->setText(ltexts.join(" | "));
-            }
-            else
-            {
-                if(larrayed)
-                    l->setText(k.getStack(lkey).join(", "));
-                else
-                    l->setText(k.get(lkey));
-            }
-        }
-    }
-
-    if(k.get("modem.3gpp.imei") == "--")
+    if(!m->interface(Mt::Modem3GPP)->isValid())
         ui->rbProp_cdma->setChecked(true);
     else
         ui->rbProp_3gpp->setChecked(true);
-
-    QDBusObjectPath sim = Modem->property("Sim").value<QDBusObjectPath>();
-    if(Sim != nullptr)
-        delete Sim;
-    Sim = new QDBusInterface("org.freedesktop.ModemManager1", sim.path(), "org.freedesktop.ModemManager1.Sim", QDBusConnection::systemBus());
-
-    ui->lblDProp_imsi->setText(Sim->property("Imsi").value<QString>());
-    ui->lblDProp_sim_identifier->setText(Sim->property("SimIdentifier").value<QString>());
 }
-void MainWindow::updateSMS()
+void MainWindow::infoClear()
 {
-    clearSMS();
-
-    QDBusMessage reply = Messaging->call("List");
-    const QDBusArgument &dbusArgs = reply.arguments().at( 0 ).value<QDBusArgument>();
-    dbusArgs.beginArray();
-    while(!dbusArgs.atEnd())
+    QList<Propui*> props = ui->tab_info->findChildren<Propui*>();
+    for(const auto& prop:props)
     {
-        QDBusObjectPath sms;
-        dbusArgs >> sms;
-        addSMS(sms.path(), false, true);
-        sysBusConnect(sms.path(), "org.freedesktop.DBus.Properties", "PropertiesChanged", SLOT(updateSMS()));
+        prop->setText("None");
     }
-    dbusArgs.endArray();
 }
-void MainWindow::updateConnections()
+
+// Tab Messaging
+void MainWindow::smsLoad(SMS *s)
 {
-    if(connectedModem != "")
+    clearViewer();
+
+    ui->from->setText(s->get("Number").value<QString>());
+    ui->smsContent->setText(s->get("Text").value<QString>());
+
+    /******** Storage Specification *******
+    * From Modem Manager Page
+    * https://www.freedesktop.org/software/ModemManager/api/1.0.0/ModemManager-Flags-and-Enumerations.html#MMSmsStorage
+    ***************************************
+    * 0 MM_SMS_STORAGE_UNKNOWN   - Storage unknown.
+    * 1 MM_SMS_STORAGE_SM        - SIM card storage area.
+    * 2 MM_SMS_STORAGE_ME        - Mobile equipment storage area.
+    * 3 MM_SMS_STORAGE_MT        - Sum of SIM and Mobile equipment storages
+    * 4 MM_SMS_STORAGE_SR        - Status report message storage area.
+    * 5 MM_SMS_STORAGE_BM        - Broadcast message storage area.
+    * 6 MM_SMS_STORAGE_TA        - Terminal adaptor message storage area.
+    ***************************************/
+    switch (s->get("Storage").value<unsigned int>())
     {
-        sysBusDisconnect(connectedModem, "org.freedesktop.dbus.properties", "PropertiesChanged", SLOT(updateInfo()));
-        sysBusDisconnect(connectedModem, "org.freedesktop.ModemManager1.Modem.Messaging", "Added", SLOT(updateSMS()));
-    }
+        case 1: ui->cbStorageME->setChecked(false);
+                ui->cbStorageSM->setChecked(true);
+                break;
 
-    connectedModem = ui->modemSelector->currentData().value<QString>();
-    qDebug() << connectedModem;
-    sysBusConnect(ui->modemSelector->currentData().value<QString>(), "org.freedesktop.dbus.properties", "PropertiesChanged", SLOT(updateInfo()));
-    sysBusConnect(ui->modemSelector->currentData().value<QString>(), "org.freedesktop.ModemManager1.Modem.Messaging", "Added", SLOT(newSMS(const QDBusObjectPath&)));
-}
-void MainWindow::addModem(const QDBusObjectPath& op)
-{
-    QString modemModel = Keys({"-m", op.path()}).get("modem.generic.model");
-    ui->modemSelector->addItem(modemModel, op.path());
-    notify("New Modem", modemModel);
-    if(ui->modemSelector->count() == 2)
-        selectModem(1);
-}
-void MainWindow::removeModem(const QDBusObjectPath& op)
-{
-    int index = ui->modemSelector->findData(op.path());
-    notify("Modem Disconnected", ui->modemSelector->itemText(index));
-    if(index == ui->modemSelector->currentIndex())
-        selectModem(index-1);
-    ui->modemSelector->removeItem(index);
-}
-void MainWindow::selectSMS()
-{
-    if(!ui->buttonDel->isEnabled()) ui->buttonDel->setEnabled(true);
-    if(ui->buttonReply->isEnabled()) ui->buttonReply->setEnabled(false);
-    if(ui->buttonSend->isEnabled()) ui->buttonSend->setEnabled(false);
-    if(ui->buttonAutoDelete->isEnabled()) ui->buttonAutoDelete->setVisible(false);
+        case 2: ui->cbStorageME->setChecked(true);
+                ui->cbStorageSM->setChecked(false);
+                break;
 
-    ui->cbStorageMT->setCheckState(Qt::Unchecked);
-    ui->cbStorageSim->setCheckState(Qt::Unchecked);
-    ui->smsTime->setTime(ui->smsTime->minimumTime());
-    ui->smsDate->setDate(ui->smsDate->minimumDate());
-    ui->smsc->clear();
-    ui->from->clear();
-    ui->smsContent->clear();
+        case 3: ui->cbStorageME->setChecked(true);
+                ui->cbStorageSM->setChecked(true);
+                break;
 
-
-
-    //Handle Autodeletes
-    QTreeWidgetItem *lastSelected = ui->categories->selectedItems().last();
-    if(lastSelected->parent() == ui->categories->topLevelItem(4) || lastSelected == ui->categories->topLevelItem(4))
-    {
-        ui->categories->clearSelection();
-
-        if(lastSelected->parent())
-        {
-            lastSelected->setSelected(true);
-            ui->from->setText(lastSelected->text(0));
-            ui->buttonDel->setText("Delete Autodelete");
-        }
-        return;
+        default: ui->cbStorageME->setChecked(false);
+                 ui->cbStorageSM->setChecked(false);
+                 break;
     }
 
+    ui->smsc->setText(s->get("SMSC").value<QString>());
 
-    QList<QTreeWidgetItem*> itms = ui->categories->selectedItems();
-    if(itms.count() > 1)
+    QDateTime dateTime = QDateTime::fromString(s->get("Timestamp").value<QString>(),
+                                               Qt::ISODate);
+    ui->smsTime->setTime(dateTime.time());
+    ui->smsDate->setDate(dateTime.date());
+}
+void MainWindow::smsMultiLoad(QList<SMS*> smslist){
+    QStringList from;
+    QStringList smsContents;
+
+    QDateTime min;
+    QDateTime max = min = QDateTime::fromString(smslist.first()->get("Timestamp").value<QString>(),
+                                                Qt::ISODate);
+
+    QStringList smscenters;
+
+    for(const auto& s:smslist)
     {
-        ui->buttonDel->setText("Delete Multiple ["+QString::number(itms.count())+" Messages]");
-    }
-    else if(itms.count() == 1)
-    {
-        QTreeWidgetItem* it = itms.first();
-        if(!it->parent())
-        {
-            ui->buttonDel->setText("Clear "+it->text(0));
-        }
-        else
-        {
-            ui->buttonDel->setText("Delete");
+        from << s->get("Number").value<QString>();
+        smsContents << from.last() + ":\n\n" + s->get("Text").value<QString>();
 
-            if(it->parent()->text(0) == "Inbox")
-            {
-                ui->buttonReply->setEnabled(true);
-                ui->buttonAutoDelete->setVisible(true);
-            }
-            else if(it->parent()->text(0) == "Drafts") ui->buttonSend->setEnabled(true);
+        QDateTime dateTime = QDateTime::fromString(s->get("Timestamp").value<QString>(),
+                                                   Qt::ISODate);
+        if(dateTime < min)
+            min = dateTime;
 
-            Keys k = Keys({"-s", it->text(1)});
+        if(dateTime > max)
+            max = dateTime;
 
-            markRead(it->text(1));
-            it->setForeground(0, QBrush());
-
-            ui->smsc->setText(k.get("sms.properties.smsc"));
-            QString stime = k.get("sms.properties.timestamp");
-
-            QStringList dateTimeZone = {"    -  -  ", "  :  :  ", "00:00"};
-            if(stime != "--") dateTimeZone = stime.split(QRegExp("\\T|\\+"));
-
-            QDate date = QDate::fromString(dateTimeZone[0], "yyyy-MM-dd");
-            QTime time = QTime::fromString(dateTimeZone[1], "hh:mm:ss");
-
-            // TODO: Put in code for time zone
-
-            ui->smsTime->setTime(time);
-            ui->smsDate->setDate(date);
-        }
-    }
-    else
-    {
-        return;
+        QString smsc = s->get("SMSC").value<QString>();
+        if(!smscenters.contains(smsc))
+            smscenters << smsc;
     }
 
-    QStringList nums, texts;
-    for(const auto& it:itms)
-    {
-        if(!it->parent())
-            continue;
-        Keys k = Keys({"-s", it->text(1)});
-        nums << k.get("sms.content.number");
-        texts << k.get("sms.content.number") + ":\n\n" + k.get("sms.content.text");
+    ui->from->setText(from.join(","));
+    ui->smsContent->setText(smsContents.join("\n\n----------------\n\n"));
 
-        QString storage = k.get("sms.properties.storage");
-        if(storage == "mt")
-        {
-            ui->cbStorageMT->setCheckState(Qt::Checked);
-        }
-        else //TODO: Add logic for other storage
-        {
-            ui->cbStorageSim->setCheckState(Qt::Checked);
-        }
-    }
-    ui->from->setText(nums.join(", "));
-    ui->smsContent->setText(texts.join("\n\n----------------\n\n"));
-}
-void MainWindow::addSMS(QString sms, bool notifyRecieved, bool append)
-{
-    Keys k = Keys({"-s", sms});
+    ui->smsc->setText("Multiple");
+    ui->smsc->setToolTip(smscenters.join(","));
 
-    if(isSetToAutodelete(k.get("sms.content.number")))
-    {
-        Keys::mmDeleteSMS(ui->modemSelector->currentData().value<QString>(), sms);
-        return;
-    }
+    ui->cbStorageME->setChecked(false);
+    ui->cbStorageSM->setChecked(false);
 
-    QTreeWidgetItem* it = new QTreeWidgetItem({k.get("sms.content.number"), sms});
-    if(!isRead(sms)) it->setForeground(0, QBrush(Qt::red));
+    ui->smsTime->setTime(max.time());
+    ui->smsDate->setDate(max.date());
+    ui->smsTime->setToolTip("From: " + min.time().toString() + " - To: " + max.time().toString());
+    ui->smsDate->setToolTip("From: " + min.date().toString() + " - To: " + max.date().toString());
+}
+void MainWindow::clearViewer(){
+    ui->from->setText("");
+    ui->smsContent->setText("");
+    ui->smsc->setText("None");
+    ui->cbStorageME->setChecked(false);
+    ui->cbStorageSM->setChecked(false);
 
-    QString type = k.get("sms.properties.pdu-type");
-    QString state = k.get("sms.properties.state");
+    ui->buttonAutoDel ->  setVisible(false);
 
-    QTreeWidgetItem* parent;
-    if(type == "deliver" && state == "received")
-    {
-        parent = ui->categories->topLevelItem(0);
-        if(notifyRecieved)
-            notify(k.get("sms.content.number"),k.get("sms.content.text"));
-    }
-    else if(type == "submit" && state == "sent")
-        parent = ui->categories->topLevelItem(1);
-    else if(type == "submit")
-        parent = ui->categories->topLevelItem(2);
-    else if(state == "receiving")
-        parent = ui->categories->topLevelItem(3);
-    else
-        parent = ui->categories->topLevelItem(3);
+    ui->smsTime->setTime(QTime::currentTime());
+    ui->smsDate->setDate(QDate::currentDate());
+    ui->smsTime->setToolTip("Time of Message Arrival.");
+    ui->smsDate->setToolTip("Date of Message Arrival.");
+}
+void MainWindow::onSMSFilterSelect(SMSFilter sfilter)
+{
+    ui->buttonAutoDel ->  setVisible(false);
+    ui->buttonSend    ->  setVisible(false);
+    ui->buttonReply   ->  setVisible(false);
+    ui->buttonResend  ->  setVisible(false);
 
-    if(append)
-        parent->addChild(it);
-    else
-        parent->insertChild(0, it);
+    ui->buttonDel     ->  setText("Clear " + ui->smsSelecter->category(sfilter));
 }
-bool MainWindow::isRead(QString sms)
+void MainWindow::onSMSMultiSelect(QList<SMS*> slist)
 {
-    return settings.value(sms, false).toBool();
-}
-void MainWindow::markRead(QString sms)
-{
-    settings.setValue(sms, true);
-}
-void MainWindow::markUnread(QString sms)
-{
-    settings.remove(sms);
-}
-bool MainWindow::isSetToAutodelete(QString num)
-{
-    QStringList autodeleteList = settings.value("autodelete", QStringList()).toStringList();
-    return autodeleteList.contains(num);
-}
-void MainWindow::markForAutodelete(QString num)
-{
-    QStringList autodeleteList = settings.value("autodelete", QStringList()).toStringList();
-    autodeleteList << num;
-    settings.setValue("autodelete", autodeleteList);
-    updateSMS();
-    listAutodeletes();
-}
-void MainWindow::unmarkFromAutodelete(QString num)
-{
-    QStringList autodeleteList = settings.value("autodelete", QStringList()).toStringList();
-    autodeleteList.removeOne(num);
-    settings.setValue("autodelete", autodeleteList);
-}
-void MainWindow::newSMS(const QDBusObjectPath& op)
-{
-    QString sms = op.path();
-    addSMS(sms);
-    sysBusConnect(sms, "org.freedesktop.DBus.Properties", "PropertiesChanged", SLOT(smsChanged(QString,QDBusMessage)));
-}
-void MainWindow::smsChanged(QString s, QDBusMessage msg)
-{
-    QString sms = msg.path();
-    QList<QTreeWidgetItem*> itms = ui->categories->findItems(sms, Qt::MatchContains|Qt::MatchRecursive, 1);
-    if(itms.count() != 0)
-    {
-        itms.first()->parent()->removeChild(itms.first());
-    }
-    addSMS(sms);
-}
-void MainWindow::onDeleteClicked()
-{
-    if(ui->categories->selectedItems().count() == 1 && !ui->categories->selectedItems().first()->parent())
-    {
-        // Category Selected
-        QTreeWidgetItem* parent = ui->categories->selectedItems().first();
-        while(parent->childCount() != 0)
-        {
-            deleteSMS(parent->child(0));
-        }
-    }
-    else if(ui->categories->selectedItems().count() == 1 && ui->categories->selectedItems().first()->parent() == ui->categories->topLevelItem(4))
-    {
-        // Autodelete Selected
-        QTreeWidgetItem *it = ui->categories->selectedItems().first();
-        unmarkFromAutodelete(it->text(0));
-        it->parent()->removeChild(it);
-    }
-    else
-    {
-        // SMS(s) selected
-        QList<QTreeWidgetItem*> itms = ui->categories->selectedItems();
-        for(const auto& it:itms)
-        {
-            // Ignore in case a category or part of autodeletes
-            if(!it->parent() || it->parent() == ui->categories->topLevelItem(4))
-                return;
+    ui->buttonAutoDel ->  setVisible(false);
+    ui->buttonSend    ->  setVisible(false);
+    ui->buttonReply   ->  setVisible(false);
+    ui->buttonResend  ->  setVisible(false);
 
-            deleteSMS(it);
-        }
+    ui->buttonDel     ->  setText("Delete Multiple [" + QString::number(slist.count()) + " Messages]");
+}
+void MainWindow::onSMSSingleSelect(SMS *s)
+{
+    ui->buttonAutoDel ->  setVisible(false);
+    ui->buttonDel     ->  setText("Delete");
+
+    switch (s->category)
+    {
+    case SMSFilter::Inbox:
+        ui->buttonSend   ->  setVisible(false);
+        ui->buttonReply  ->  setVisible(true);
+        ui->buttonResend ->  setVisible(false);
+
+        if(!getAutoDeletes().contains(s->get("Number").value<QString>()))
+            ui->buttonAutoDel->setVisible(true);
+
+        break;
+
+    case SMSFilter::Sent:
+        ui->buttonSend   ->  setVisible(false);
+        ui->buttonReply  ->  setVisible(false);
+        ui->buttonResend ->  setVisible(true);
+        break;
+
+    case SMSFilter::Drafts:
+        ui->buttonSend   ->  setVisible(true);
+        ui->buttonReply  ->  setVisible(false);
+        ui->buttonResend ->  setVisible(false);
+        break;
+
+    default:
+        ui->buttonSend   ->  setVisible(false);
+        ui->buttonReply  ->  setVisible(false);
+        ui->buttonResend ->  setVisible(false);
+        break;
     }
+}
+
+// Button Slots
+void MainWindow::onSendClicked()
+{
+    ui->smsSelecter->selectedSMS()->send();
 }
 void MainWindow::onReplyClicked()
 {
-    composer* cw = new composer();
-    connect(cw, SIGNAL(sendSMS(QString,QString)), this, SLOT(sendSMS(QString, QString)));
-    connect(cw, SIGNAL(saveSMS(QString,QString)), this, SLOT(saveSMS(QString, QString)));
-    cw->setNumber(ui->categories->selectedItems().first()->text(0));
+    cw->setNumber(ui->smsSelecter->selectedItems().first()->text(0));
     cw->focusMessage();
     cw->show();
 }
-void MainWindow::onSendClicked()
+void MainWindow::onResendClicked()
 {
-    Keys({"-s", ui->categories->selectedItems().first()->text(1), "--send"});
-}
-void MainWindow::onNewClicked()
-{
-    composer* cw = new composer();
-    connect(cw, SIGNAL(sendSMS(QString,QString)), this, SLOT(sendSMS(QString, QString)));
-    connect(cw, SIGNAL(saveSMS(QString,QString)), this, SLOT(saveSMS(QString, QString)));
+    cw->setNumber(ui->smsSelecter->selectedSMS()->get("Number").value<QString>());
+    cw->setMessage(ui->smsSelecter->selectedSMS()->get("Text").value<QString>());
+    cw->focusMessage();
     cw->show();
 }
-void MainWindow::onAutoDeleteClicked()
+void MainWindow::onAutoDelClicked()
 {
-    markForAutodelete(ui->categories->selectedItems().first()->text(0));
+    QString num = ui->smsSelecter->selectedSMS()->get("Number").value<QString>();
+    addAutoDelete(num);
+    QList<QTreeWidgetItem*> itms = ui->smsSelecter->findItems(num, Qt::MatchRecursive);
+    ui->smsSelecter->deleteListed(itms);
+    clearViewer();
 }
-void MainWindow::sendSMS(QString number, QString text)
+
+// Notification
+void MainWindow::setStatus(QString text, int timeout)
 {
-    QStringList args;
-    args << "-m";
-    args << ui->modemSelector->currentData().value<QString>();
-    args << "--messaging-create-sms=""text='" + text + "',number='" + number + "'""";
-    QString draft = Keys(args).get("Successfully created new SMS");
-    Keys({"-s", draft, "--send"});
-}
-void MainWindow::saveSMS(QString number, QString text)
-{
-    QStringList args;
-    args << "-m";
-    args << ui->modemSelector->currentData().value<QString>();
-    args << "--messaging-create-sms=""text='" + text + "',number='" + number + "'""";
-    Keys(args).get("Successfully created new SMS");
-}
-void MainWindow::deleteSMS(QTreeWidgetItem *it)
-{
-    Keys::mmDeleteSMS(ui->modemSelector->currentData().value<QString>(), it->text(1));
-    markUnread(it->text(1));
-    it->parent()->removeChild(it);
-}
-void MainWindow::notify(QString title, QString msg)
-{
-    sysIco->showMessage(title, msg, *ico);
+    stub("MainWindow::setStatus");
 }

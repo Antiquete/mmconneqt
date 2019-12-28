@@ -19,15 +19,14 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <QGroupBox>
-#include <QVBoxLayout>
-#include <QTreeWidgetItem>
-#include <QDateTime>
-#include <QMessageBox>
-#include <QSystemTrayIcon>
-#include <QSettings>
+
+#include "composer.h"
+#include "autodeletes.h"
 
 #include "core.h"
+#include "modem.h"
+#include "sms.h"
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -36,66 +35,40 @@ QT_END_NAMESPACE
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
-
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+public slots:
+
 private:
     Ui::MainWindow *ui;
 
-    QSettings settings;
+    composer *cw = new composer();
+    Autodeletes *aw = new Autodeletes();
 
-    QDBusConnection sysBus = QDBusConnection::systemBus();
-
-    QString connectedModem = "";
-    QIcon* ico;
-    QSystemTrayIcon* sysIco;
-
-    QDBusInterface *Modem, *Messaging, *Sim;
-
-    void listAutodeletes();
-
-    void listModems();
-
-    bool isRead(QString sms);
-    void markRead(QString sms);
-    void markUnread(QString sms);
-
-    bool isSetToAutodelete(QString num);
-    void markForAutodelete(QString num);
-    void unmarkFromAutodelete(QString num);
-
-    void deleteSMS(QTreeWidgetItem*);
+    void initUi();
 
 private slots:
-    void addModem(const QDBusObjectPath&);
-    void removeModem(const QDBusObjectPath&);
-    void selectModem(int index);
+    // Slots for Modem Signals
+    void infoUpdate(Modem*);
+    void infoClear();
 
-    void clearInfo();
-    void clearSMS();
+    // Slots for Messaging Signals
+    void smsLoad(SMS*);
+    void smsMultiLoad(QList<SMS*>);
+    void clearViewer();
+    void onSMSSingleSelect(SMS*);
+    void onSMSMultiSelect(QList<SMS*>);
+    void onSMSFilterSelect(SMSFilter);
 
-    void updateInfo();
-    void updateSMS();
-    void updateInterfaces();
-    void updateConnections();
-
-    void selectSMS();
-    void addSMS(QString, bool notify = true, bool append = false);
-    void newSMS(const QDBusObjectPath&);
-    void smsChanged(QString,QDBusMessage);
-
-    void onDeleteClicked();
-    void onReplyClicked();
+    // Button Slots
     void onSendClicked();
-    void onNewClicked();
-    void onAutoDeleteClicked();
+    void onReplyClicked();
+    void onResendClicked();
+    void onAutoDelClicked();
 
-    void notify(QString, QString);
-
-public slots:
-    void sendSMS(QString, QString);
-    void saveSMS(QString, QString);
+    // Notification Slots
+    void setStatus(QString, int);
 };
 #endif // MAINWINDOW_H

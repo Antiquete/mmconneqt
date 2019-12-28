@@ -1,3 +1,5 @@
+TARGET = "MMConneqt"
+
 QT       += dbus core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
@@ -16,16 +18,26 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    autodeletes.cpp \
     composer.cpp \
+    core.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    propui.cpp
 
 HEADERS += \
+    autodeletes.h \
     composer.h \
     core.h \
-    mainwindow.h
+    mainwindow.h \
+    modem.h \
+    modemlister.h \
+    propui.h \
+    sms.h \
+    smslister.h
 
 FORMS += \
+    autodeletes.ui \
     composer.ui \
     mainwindow.ui
 

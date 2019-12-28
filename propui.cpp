@@ -15,37 +15,3 @@
 // You should have received a copy of the GNU General Public License
 // along with MMconneqt.  If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef COMPOSER_H
-#define COMPOSER_H
-
-#include <QDialog>
-#include <QPushButton>
-
-namespace Ui {
-class composer;
-}
-
-class composer : public QDialog
-{
-    Q_OBJECT
-
-public:
-    explicit composer(QWidget *parent = nullptr);
-    ~composer();
-
-    void setNumber(QString);
-    void setMessage(QString);
-    void focusMessage();
-
-private:
-    Ui::composer *gui;
-
-private slots:
-    void process(QAbstractButton*);
-
-signals:
-    void sendSMS(QString, QString);
-    void saveSMS(QString, QString);
-};
-
-#endif // COMPOSER_H

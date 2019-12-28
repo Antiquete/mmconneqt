@@ -18,19 +18,91 @@
 #ifndef CORE_H
 #define CORE_H
 
-#include <QProcess>
-#include <QObject>
-#include <QtDBus/QDBusConnection>
-#include <QtDBus/QDBusInterface>
-#include <QtDBus/QDBusReply>
-#include <QList>
+// Essential Includes
 #include <QString>
 #include <QStringList>
+
+// DBus Incldues
+#include <QtDBus/QDBusInterface>
+#include <QtDBus/QDBusReply>
+#include <QDBusMetaType>
+
+// MMCli Process Interface Includes (Old)
+#include <QProcess>
+
+// Other Interfaces
+#include <QSettings>
+#include <QSystemTrayIcon>
+
+// Debugging Includes
 #include <QDebug>
 
-#define sysBusConnect(W,X,Y,Z) (Q_ASSERT(QDBusConnection::systemBus().connect(QString(), W, X, Y, this, Z)))
-#define sysBusDisconnect(W,X,Y,Z) (Q_ASSERT(QDBusConnection::systemBus().disconnect(QString(), W, X, Y, this, Z)))
 
+// Autodeletion Storage
+static QSettings _settingsAutodelete("MMConneqt", "Autodeletes");
+
+extern QStringList getAutoDeletes();
+extern void setAutoDeletes(QStringList autodels);
+extern void addAutoDelete(QString num);
+extern void removeAutoDelete(QString num);
+
+// Notifications
+const QString ICON_FILE=":/icon.png";
+static QSystemTrayIcon *sysIco = nullptr;
+
+extern void stub(QString caller, QString message="");
+extern void Notify(QString title, QString msg);
+
+// Modem Manager Interfaces
+const QString MM_SERVICE = "org.freedesktop.ModemManager1";
+const QString MM_PROPERTIES_INTERFACE = "org.freedesktop.DBus.Properties";
+
+typedef QMap<QString, QVariant> D_SV;
+typedef QMap<QString, D_SV> D_S_DSV;
+typedef QMap<QDBusObjectPath, D_S_DSV> D_OP_DSDSV;
+
+Q_DECLARE_METATYPE(D_SV);
+Q_DECLARE_METATYPE(D_S_DSV);
+Q_DECLARE_METATYPE(D_OP_DSDSV);
+
+class MMDbusInterface : public QDBusInterface{
+    Q_OBJECT
+public:
+    MMDbusInterface(QString path, QString interface) :
+        QDBusInterface(MM_SERVICE, path, interface, QDBusConnection::systemBus())
+    {
+        qDBusRegisterMetaType<D_SV>();
+        qDBusRegisterMetaType<D_S_DSV>();
+        qDBusRegisterMetaType<D_OP_DSDSV>();
+    }
+
+    void connect(QString signal, QObject *receiver, const char* slot)
+    {
+        if(!QDBusConnection::systemBus().connect(this->service(), this->path(), this->interface(), signal, receiver, slot))
+            qDebug() << "Dbus connect() Failed: Service:"<< this->service() <<" Path:"<< this->path() << "Interface:" << this->interface() << " Signal:" << signal;
+    }
+    void disconnect(QString signal, QObject *receiver, const char* slot)
+    {
+        if(!QDBusConnection::systemBus().disconnect(this->service(), this->path(), this->interface(), signal, receiver, slot))
+            qDebug() << "Dbus disconnect() Failed: Signal:"<<signal;
+    }
+};
+class PropertiesInterface : public MMDbusInterface{
+    Q_OBJECT
+public:
+    PropertiesInterface(QString path) :
+        MMDbusInterface(path, MM_PROPERTIES_INTERFACE) {}
+
+    QVariant get(QString interface, QString name)
+    {
+        QDBusReply<QVariant> prop = this->call("Get",
+                                               QVariant::fromValue<QString>(interface),
+                                               QVariant::fromValue<QString>(name));
+        return prop.value();
+    }
+};
+
+// MMCli Interfacing through Keys (Old)
 class Keys{
 private:
     QHash<QString, QString> KeyPairs = {};

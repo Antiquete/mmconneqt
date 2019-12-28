@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1076</width>
-    <height>725</height>
+    <width>1134</width>
+    <height>757</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,7 +38,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QComboBox" name="modemSelector">
+         <widget class="ModemLister" name="modemSelector">
           <property name="maximumSize">
            <size>
             <width>580</width>
@@ -48,11 +48,6 @@
           <property name="sizeAdjustPolicy">
            <enum>QComboBox::AdjustToContents</enum>
           </property>
-          <item>
-           <property name="text">
-            <string>None</string>
-           </property>
-          </item>
          </widget>
         </item>
        </layout>
@@ -104,20 +99,91 @@
         <property name="tabBarAutoHide">
          <bool>false</bool>
         </property>
-        <widget class="QWidget" name="tab_modem">
+        <widget class="QWidget" name="tab_info">
          <attribute name="title">
           <string>Info</string>
          </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout_10">
+         <layout class="QVBoxLayout" name="verticalLayout_7">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_4">
+           <widget class="Propui" name="propModel">
+            <property name="font">
+             <font>
+              <pointsize>12</pointsize>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>----</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+            </property>
+            <property name="Target" stdset="0">
+             <string>Model</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="Propui" name="propManufacturer">
+            <property name="text">
+             <string>----</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="textInteractionFlags">
+             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+            </property>
+            <property name="Target" stdset="0">
+             <string>Manufacturer</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_11">
             <item>
-             <widget class="QLabel" name="lblProp_1">
+             <spacer name="horizontalSpacer_4">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="Propui" name="propOperator">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="font">
                <font>
-                <pointsize>12</pointsize>
-                <weight>75</weight>
-                <bold>true</bold>
+                <pointsize>8</pointsize>
                </font>
               </property>
               <property name="text">
@@ -129,16 +195,34 @@
               <property name="textInteractionFlags">
                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
               </property>
-              <property name="Key" stdset="0">
-               <string>modem.generic.model</string>
+              <property name="Target" stdset="0">
+               <string>OperatorName</string>
               </property>
-              <property name="isKeyArrayed" stdset="0">
-               <bool>false</bool>
+              <property name="TargetMt" stdset="0">
+               <string>4</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QLabel" name="lblProp_2">
+             <widget class="QLabel" name="label_9">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>|</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Propui" name="propHRev">
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
               <property name="text">
                <string>----</string>
               </property>
@@ -148,487 +232,209 @@
               <property name="textInteractionFlags">
                <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
               </property>
-              <property name="Key" stdset="0">
-               <string>modem.generic.manufacturer</string>
-              </property>
-              <property name="isKeyArrayed" stdset="0">
-               <bool>false</bool>
+              <property name="Target" stdset="0">
+               <string>HardwareRevision</string>
               </property>
              </widget>
             </item>
             <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_11">
-              <item>
-               <spacer name="horizontalSpacer_4">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QLabel" name="lblProp_5">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>8</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>----</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-                <property name="textInteractionFlags">
-                 <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                </property>
-                <property name="Key" stdset="0">
-                 <string>modem.dbus-path</string>
-                </property>
-                <property name="isKeyArrayed" stdset="0">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_9">
-                <property name="font">
-                 <font>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>|</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="lblProp_4">
-                <property name="font">
-                 <font>
-                  <pointsize>8</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>----</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-                <property name="textInteractionFlags">
-                 <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                </property>
-                <property name="Key" stdset="0">
-                 <string>modem.generic.hardware-revision</string>
-                </property>
-                <property name="isKeyArrayed" stdset="0">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_11">
-                <property name="font">
-                 <font>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>|</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="lblProp_3">
-                <property name="font">
-                 <font>
-                  <pointsize>8</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>----</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-                <property name="textInteractionFlags">
-                 <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                </property>
-                <property name="Key" stdset="0">
-                 <string>modem.generic.revision</string>
-                </property>
-                <property name="isKeyArrayed" stdset="0">
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_12">
-                <property name="font">
-                 <font>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>|</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="lblProp_ports">
-                <property name="font">
-                 <font>
-                  <pointsize>8</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>----</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-                <property name="textInteractionFlags">
-                 <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                </property>
-                <property name="Key" stdset="0">
-                 <string>modem.generic.ports</string>
-                </property>
-                <property name="isKeyArrayed" stdset="0">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="label_14">
-                <property name="font">
-                 <font>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>|</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="lblProp_7">
-                <property name="font">
-                 <font>
-                  <pointsize>8</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>----</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-                <property name="textInteractionFlags">
-                 <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                </property>
-                <property name="Key" stdset="0">
-                 <string>modem.generic.drivers</string>
-                </property>
-                <property name="isKeyArrayed" stdset="0">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_5">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_19" stretch="2,0,0,2">
-              <item>
-               <spacer name="horizontalSpacer_8">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>40</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="rbProp_3gpp">
-                <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
-                </property>
-                <property name="text">
-                 <string>GSM</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="rbProp_cdma">
-                <property name="focusPolicy">
-                 <enum>Qt::NoFocus</enum>
-                </property>
-                <property name="text">
-                 <string>CDMA</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer name="horizontalSpacer_9">
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>368</width>
-                  <height>17</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBox">
-              <property name="title">
-               <string>Info</string>
+             <widget class="QLabel" name="label_11">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
               </property>
-              <layout class="QGridLayout" name="gridLayout" columnstretch="0,1,0">
-               <item row="2" column="2">
-                <widget class="QLabel" name="lblProp_imei">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
+              <property name="text">
+               <string>|</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Propui" name="propRev">
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>----</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+              </property>
+              <property name="Target" stdset="0">
+               <string>Revision</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_12">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>|</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Propui" name="propPrimaryPort">
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>----</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+              </property>
+              <property name="Target" stdset="0">
+               <string>PrimaryPort</string>
+              </property>
+              <property name="TargetType" stdset="0">
+               <string>2</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_14">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>|</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="Propui" name="propDrivers">
+              <property name="font">
+               <font>
+                <pointsize>8</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>----</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignCenter</set>
+              </property>
+              <property name="textInteractionFlags">
+               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+              </property>
+              <property name="Target" stdset="0">
+               <string>Drivers</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_19" stretch="2,0,0,2">
+            <item>
+             <spacer name="horizontalSpacer_8">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="rbProp_3gpp">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>GSM</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QRadioButton" name="rbProp_cdma">
+              <property name="focusPolicy">
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text">
+               <string>CDMA</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_9">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>368</width>
+                <height>17</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox">
+            <property name="title">
+             <string>Info</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignCenter</set>
+            </property>
+            <property name="flat">
+             <bool>false</bool>
+            </property>
+            <property name="checkable">
+             <bool>false</bool>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="1,0,1">
+               <item>
+                <widget class="QLabel" name="lbl_key">
                  <property name="text">
-                  <string>Unknown</string>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>false</bool>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                 </property>
-                 <property name="Key" stdset="0">
-                  <string>modem.3gpp.imei</string>
-                 </property>
-                 <property name="isKeyArrayed" stdset="0">
-                  <bool>false</bool>
+                  <string>Device ID</string>
                  </property>
                 </widget>
                </item>
-               <item row="7" column="2">
-                <widget class="QLabel" name="lblDProp_imsi">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Unknown</string>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>false</bool>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="1">
-                <widget class="QLabel" name="lbl_seperator_7">
-                 <property name="text">
-                  <string>-</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="lbl_key_2">
-                 <property name="text">
-                  <string>Equipment ID</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QLabel" name="lbl_seperator_2">
-                 <property name="text">
-                  <string>-</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="2">
-                <widget class="QLabel" name="lblProp_device_identifier">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Unknown</string>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>false</bool>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                 </property>
-                 <property name="Key" stdset="0">
-                  <string>modem.generic.device-identifier</string>
-                 </property>
-                 <property name="isKeyArrayed" stdset="0">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="1">
-                <widget class="QLabel" name="lbl_seperator_4">
-                 <property name="text">
-                  <string>-</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="2">
-                <widget class="QLabel" name="lblProp_equipment_identifier">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Unknown</string>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>false</bool>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                 </property>
-                 <property name="Key" stdset="0">
-                  <string>modem.generic.equipment-identifier</string>
-                 </property>
-                 <property name="isKeyArrayed" stdset="0">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="2">
-                <widget class="QLabel" name="lblProp_nid">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Unknown</string>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>false</bool>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                 </property>
-                 <property name="Key" stdset="0">
-                  <string>modem.cdma.nid</string>
-                 </property>
-                 <property name="isKeyArrayed" stdset="0">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="0">
-                <widget class="QLabel" name="lbl_key_4">
-                 <property name="text">
-                  <string>ESN</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
+               <item>
                 <widget class="QLabel" name="lbl_seperator_1">
                  <property name="text">
                   <string>-</string>
@@ -638,29 +444,8 @@
                  </property>
                 </widget>
                </item>
-               <item row="6" column="0">
-                <widget class="QLabel" name="lbl_key_6">
-                 <property name="text">
-                  <string>NID</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="7" column="0">
-                <widget class="QLabel" name="label_69">
-                 <property name="text">
-                  <string>IMSI</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="lbl_key_7">
-                 <property name="text">
-                  <string>MEID</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="2">
-                <widget class="QLabel" name="lblProp_sid">
+               <item>
+                <widget class="Propui" name="lblProp_device_identifier">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -685,63 +470,75 @@
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                  </property>
-                 <property name="Key" stdset="0">
-                  <string>modem.cdma.sid</string>
-                 </property>
-                 <property name="isKeyArrayed" stdset="0">
-                  <bool>false</bool>
+                 <property name="Target" stdset="0">
+                  <string>DeviceIdentifier</string>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="1,0,1">
+               <item>
+                <widget class="QLabel" name="lbl_key_2">
+                 <property name="text">
+                  <string>Equipment ID</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="lbl_seperator_2">
+                 <property name="text">
+                  <string>-</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="Propui" name="lblProp_equipment_identifier">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Unknown</string>
+                 </property>
+                 <property name="scaledContents">
+                  <bool>false</bool>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                 </property>
+                 <property name="Target" stdset="0">
+                  <string>EquipmentIdentifier</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_12" stretch="1,0,1">
+               <item>
                 <widget class="QLabel" name="lbl_key_3">
                  <property name="text">
                   <string>IMEI</string>
                  </property>
                 </widget>
                </item>
-               <item row="4" column="2">
-                <widget class="QLabel" name="lblProp_esn">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Unknown</string>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>false</bool>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                 </property>
-                 <property name="Key" stdset="0">
-                  <string>modem.cdma.esn</string>
-                 </property>
-                 <property name="isKeyArrayed" stdset="0">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="8" column="0">
-                <widget class="QLabel" name="label_70">
-                 <property name="text">
-                  <string>SIM ID</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
+               <item>
                 <widget class="QLabel" name="lbl_seperator_3">
                  <property name="text">
                   <string>-</string>
@@ -751,14 +548,104 @@
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="lbl_key">
+               <item>
+                <widget class="Propui" name="lblProp_imei">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
                  <property name="text">
-                  <string>Device ID</string>
+                  <string>Unknown</string>
+                 </property>
+                 <property name="scaledContents">
+                  <bool>false</bool>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                 </property>
+                 <property name="Target" stdset="0">
+                  <string>Imei</string>
+                 </property>
+                 <property name="TargetMt" stdset="0">
+                  <string>4</string>
                  </property>
                 </widget>
                </item>
-               <item row="4" column="1">
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_13" stretch="1,0,1">
+               <item>
+                <widget class="QLabel" name="lbl_key_7">
+                 <property name="text">
+                  <string>MEID</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="lbl_seperator_4">
+                 <property name="text">
+                  <string>-</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="Propui" name="lblProp_meid">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Unknown</string>
+                 </property>
+                 <property name="scaledContents">
+                  <bool>false</bool>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                 </property>
+                 <property name="Target" stdset="0">
+                  <string>Meid</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="1,0,1">
+               <item>
+                <widget class="QLabel" name="lbl_key_4">
+                 <property name="text">
+                  <string>ESN</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QLabel" name="lbl_seperator_5">
                  <property name="text">
                   <string>-</string>
@@ -768,15 +655,8 @@
                  </property>
                 </widget>
                </item>
-               <item row="5" column="0">
-                <widget class="QLabel" name="lbl_key_5">
-                 <property name="text">
-                  <string>SID</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="2">
-                <widget class="QLabel" name="lblProp_meid">
+               <item>
+                <widget class="Propui" name="lblProp_esn">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -801,15 +681,23 @@
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                  </property>
-                 <property name="Key" stdset="0">
-                  <string>modem.cdma.meid</string>
-                 </property>
-                 <property name="isKeyArrayed" stdset="0">
-                  <bool>false</bool>
+                 <property name="Target" stdset="0">
+                  <string/>
                  </property>
                 </widget>
                </item>
-               <item row="5" column="1">
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="1,0,1">
+               <item>
+                <widget class="QLabel" name="lbl_key_5">
+                 <property name="text">
+                  <string>SID</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QLabel" name="lbl_seperator_6">
                  <property name="text">
                   <string>-</string>
@@ -819,7 +707,101 @@
                  </property>
                 </widget>
                </item>
-               <item row="7" column="1">
+               <item>
+                <widget class="Propui" name="lblProp_sid">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Unknown</string>
+                 </property>
+                 <property name="scaledContents">
+                  <bool>false</bool>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                 </property>
+                 <property name="Target" stdset="0">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_16" stretch="1,0,1">
+               <item>
+                <widget class="QLabel" name="lbl_key_6">
+                 <property name="text">
+                  <string>NID</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="lbl_seperator_7">
+                 <property name="text">
+                  <string>-</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="Propui" name="lblProp_nid">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Unknown</string>
+                 </property>
+                 <property name="scaledContents">
+                  <bool>false</bool>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                 </property>
+                 <property name="Target" stdset="0">
+                  <string/>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_17" stretch="1,0,1">
+               <item>
+                <widget class="QLabel" name="label_69">
+                 <property name="text">
+                  <string>IMSI</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QLabel" name="lbl_seperator_17">
                  <property name="text">
                   <string>-</string>
@@ -829,7 +811,46 @@
                  </property>
                 </widget>
                </item>
-               <item row="8" column="1">
+               <item>
+                <widget class="Propui" name="lblDProp_imsi">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Unknown</string>
+                 </property>
+                 <property name="scaledContents">
+                  <bool>false</bool>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_18" stretch="1,0,1">
+               <item>
+                <widget class="QLabel" name="label_70">
+                 <property name="text">
+                  <string>SIM ID</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QLabel" name="lbl_seperator_18">
                  <property name="text">
                   <string>-</string>
@@ -839,8 +860,8 @@
                  </property>
                 </widget>
                </item>
-               <item row="8" column="2">
-                <widget class="QLabel" name="lblDProp_sim_identifier">
+               <item>
+                <widget class="Propui" name="lblDProp_sim_identifier">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -864,138 +885,33 @@
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                 </property>
+                 <property name="Target" stdset="0">
+                  <string>Sim</string>
                  </property>
                 </widget>
                </item>
               </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBoxProperties_2">
-              <property name="title">
-               <string>Properties</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,0,0,0" columnstretch="0,1,0">
-               <item row="0" column="2">
-                <widget class="QLabel" name="lblProp_model_2">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Unknown</string>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>false</bool>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                 </property>
-                 <property name="Key" stdset="0">
-                  <string>modem.generic.device</string>
-                 </property>
-                 <property name="isKeyArrayed" stdset="0">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="2">
-                <widget class="QLabel" name="lblProp_equipment_identifier_10">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Unknown</string>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>false</bool>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                 </property>
-                 <property name="Key" stdset="0">
-                  <string>modem.generic.bearers</string>
-                 </property>
-                 <property name="isKeyArrayed" stdset="0">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="2">
-                <widget class="QLabel" name="lblProp_manufacturer_4">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Unknown</string>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>false</bool>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                 </property>
-                 <property name="Key" stdset="0">
-                  <string>Code:modem.3gpp.operator-code,Name:modem.3gpp.operator-name</string>
-                 </property>
-                 <property name="isKeyArrayed" stdset="0">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="1">
-                <widget class="QLabel" name="lbl_seperator_11">
-                 <property name="text">
-                  <string>-</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0">
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBoxProperties_2">
+            <property name="title">
+             <string>Properties</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_5">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_20" stretch="1,0,1">
+               <item>
                 <widget class="QLabel" name="label_6">
                  <property name="text">
                   <string>Device</string>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="1">
+               <item>
                 <widget class="QLabel" name="lbl_seperator_8">
                  <property name="text">
                   <string>-</string>
@@ -1005,8 +921,8 @@
                  </property>
                 </widget>
                </item>
-               <item row="2" column="2">
-                <widget class="QLabel" name="lblProp_equipment_identifier_9">
+               <item>
+                <widget class="Propui" name="lblProp_device">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -1031,73 +947,23 @@
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                  </property>
-                 <property name="Key" stdset="0">
-                  <string>modem.generic.sim</string>
-                 </property>
-                 <property name="isKeyArrayed" stdset="0">
-                  <bool>false</bool>
+                 <property name="Target" stdset="0">
+                  <string>Device</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="2">
-                <widget class="QLabel" name="lblProp_hardware_revision_2">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_21" stretch="1,0,1">
+               <item>
+                <widget class="QLabel" name="label_46">
                  <property name="text">
-                  <string>Unknown</string>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>false</bool>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                 </property>
-                 <property name="Key" stdset="0">
-                  <string>modem.generic.primary-port</string>
-                 </property>
-                 <property name="isKeyArrayed" stdset="0">
-                  <bool>false</bool>
+                  <string>Ports</string>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="1">
-                <widget class="QLabel" name="lbl_seperator_10">
-                 <property name="text">
-                  <string>-</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="0">
-                <widget class="QLabel" name="label_68">
-                 <property name="text">
-                  <string>Operator</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_94">
-                 <property name="text">
-                  <string>DBus-Path (SIM)</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
+               <item>
                 <widget class="QLabel" name="lbl_seperator_9">
                  <property name="text">
                   <string>-</string>
@@ -1107,8 +973,50 @@
                  </property>
                 </widget>
                </item>
-               <item row="4" column="1">
-                <widget class="QLabel" name="lbl_seperator_12">
+               <item>
+                <widget class="Propui" name="lblProp_ports">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Unknown</string>
+                 </property>
+                 <property name="scaledContents">
+                  <bool>false</bool>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                 </property>
+                 <property name="Target" stdset="0">
+                  <string>Ports</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_22" stretch="1,0,1">
+               <item>
+                <widget class="QLabel" name="label_94">
+                 <property name="text">
+                  <string>DBus-Path (SIM)</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="lbl_seperator_10">
                  <property name="text">
                   <string>-</string>
                  </property>
@@ -1117,30 +1025,113 @@
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
+               <item>
+                <widget class="Propui" name="lblProp_equipment_identifier_9">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Unknown</string>
+                 </property>
+                 <property name="scaledContents">
+                  <bool>false</bool>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                 </property>
+                 <property name="Target" stdset="0">
+                  <string>Sim</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_23" stretch="1,0,1">
+               <item>
                 <widget class="QLabel" name="label_95">
                  <property name="text">
                   <string>DBus-Path (Bearer)</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="label_46">
+               <item>
+                <widget class="QLabel" name="lbl_seperator_11">
                  <property name="text">
-                  <string>Primary Port</string>
+                  <string>-</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="Propui" name="lblProp_equipment_identifier_10">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Unknown</string>
+                 </property>
+                 <property name="scaledContents">
+                  <bool>false</bool>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                 </property>
+                 <property name="Target" stdset="0">
+                  <string>Bearers</string>
+                 </property>
+                 <property name="TargetType" stdset="0">
+                  <string>1</string>
                  </property>
                 </widget>
                </item>
               </layout>
-             </widget>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="groupBox_2">
-              <property name="title">
-               <string>Network</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_3" columnstretch="0,1,0">
-               <item row="0" column="1">
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <widget class="QGroupBox" name="groupBox_2">
+            <property name="title">
+             <string>Network</string>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_6">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_24" stretch="1,0,1">
+               <item>
+                <widget class="QLabel" name="label_18">
+                 <property name="text">
+                  <string>State</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QLabel" name="lbl_seperator_13">
                  <property name="text">
                   <string>-</string>
@@ -1150,15 +1141,8 @@
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="label_18">
-                 <property name="text">
-                  <string>State</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="2">
-                <widget class="QLabel" name="lblProp_model_3">
+               <item>
+                <widget class="Propui" name="lblProp_model_3">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -1183,36 +1167,23 @@
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                  </property>
-                 <property name="Key" stdset="0">
-                  <string>modem.generic.state</string>
-                 </property>
-                 <property name="isKeyArrayed" stdset="0">
-                  <bool>false</bool>
+                 <property name="Target" stdset="0">
+                  <string>State</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0">
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_25" stretch="1,0,1">
+               <item>
                 <widget class="QLabel" name="label_10">
                  <property name="text">
                   <string>Mode</string>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="label_13">
-                 <property name="text">
-                  <string>Access Technology</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="label_15">
-                 <property name="text">
-                  <string>Signal</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
+               <item>
                 <widget class="QLabel" name="lbl_seperator_14">
                  <property name="text">
                   <string>-</string>
@@ -1222,7 +1193,52 @@
                  </property>
                 </widget>
                </item>
-               <item row="2" column="1">
+               <item>
+                <widget class="Propui" name="lblProp_model_4">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Unknown</string>
+                 </property>
+                 <property name="scaledContents">
+                  <bool>false</bool>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                 </property>
+                 <property name="Target" stdset="0">
+                  <string>CurrentModes</string>
+                 </property>
+                 <property name="TargetType" stdset="0">
+                  <string>10</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_26" stretch="1,0,1">
+               <item>
+                <widget class="QLabel" name="label_13">
+                 <property name="text">
+                  <string>Access Technology</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QLabel" name="lbl_seperator_15">
                  <property name="text">
                   <string>-</string>
@@ -1232,7 +1248,49 @@
                  </property>
                 </widget>
                </item>
-               <item row="3" column="1">
+               <item>
+                <widget class="Propui" name="lblProp_model_7">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="text">
+                  <string>Unknown</string>
+                 </property>
+                 <property name="scaledContents">
+                  <bool>false</bool>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
+                 </property>
+                 <property name="Target" stdset="0">
+                  <string>AccessTechnologies</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_27" stretch="1,0,1">
+               <item>
+                <widget class="QLabel" name="label_15">
+                 <property name="text">
+                  <string>Signal</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QLabel" name="lbl_seperator_16">
                  <property name="text">
                   <string>-</string>
@@ -1242,8 +1300,8 @@
                  </property>
                 </widget>
                </item>
-               <item row="1" column="2">
-                <widget class="QLabel" name="lblProp_model_4">
+               <item>
+                <widget class="Propui" name="lblProp_model_6">
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -1268,86 +1326,18 @@
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
                  </property>
-                 <property name="Key" stdset="0">
-                  <string>modem.generic.current-modes</string>
+                 <property name="Target" stdset="0">
+                  <string>SignalQuality</string>
                  </property>
-                 <property name="isKeyArrayed" stdset="0">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="2">
-                <widget class="QLabel" name="lblProp_model_6">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Unknown</string>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>false</bool>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                 </property>
-                 <property name="Key" stdset="0">
-                  <string>modem.generic.signal-quality.value</string>
-                 </property>
-                 <property name="isKeyArrayed" stdset="0">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="2">
-                <widget class="QLabel" name="lblProp_model_7">
-                 <property name="sizePolicy">
-                  <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize">
-                  <size>
-                   <width>16777215</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="text">
-                  <string>Unknown</string>
-                 </property>
-                 <property name="scaledContents">
-                  <bool>false</bool>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
-                 </property>
-                 <property name="Key" stdset="0">
-                  <string>modem.generic.access-technologies</string>
-                 </property>
-                 <property name="isKeyArrayed" stdset="0">
-                  <bool>true</bool>
+                 <property name="TargetType" stdset="0">
+                  <string>8</string>
                  </property>
                 </widget>
                </item>
               </layout>
-             </widget>
-            </item>
-           </layout>
+             </item>
+            </layout>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -1355,325 +1345,325 @@
          <attribute name="title">
           <string>Messaging</string>
          </attribute>
-         <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <layout class="QVBoxLayout" name="verticalLayout_2">
           <item>
-           <layout class="QVBoxLayout" name="verticalLayout_2">
+           <widget class="QGroupBox" name="actionGroup">
+            <layout class="QHBoxLayout" name="horizontalLayout">
+             <item>
+              <widget class="QPushButton" name="buttonNew">
+               <property name="text">
+                <string>New</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="buttonReply">
+               <property name="visible">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Reply</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="buttonSend">
+               <property name="visible">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Send</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="buttonResend">
+               <property name="visible">
+                <bool>false</bool>
+               </property>
+               <property name="text">
+                <string>Resend</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="horizontalSpacer">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
+              <widget class="QPushButton" name="buttonDel">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="text">
+                <string>Delete</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_7">
             <item>
-             <widget class="QGroupBox" name="actionGroup">
-              <layout class="QHBoxLayout" name="horizontalLayout">
-               <item>
-                <widget class="QPushButton" name="buttonNew">
-                 <property name="text">
-                  <string>New</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="buttonReply">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="text">
-                  <string>Reply</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="buttonSend">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="text">
-                  <string>Send</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer name="horizontalSpacer">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" stdset="0">
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-               <item>
-                <widget class="QPushButton" name="buttonDel">
-                 <property name="enabled">
-                  <bool>false</bool>
-                 </property>
-                 <property name="text">
-                  <string>Delete</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,1">
+             <layout class="QVBoxLayout" name="categorieGroup">
               <item>
-               <widget class="QTreeWidget" name="categories">
+               <widget class="SMSLister" name="smsSelecter">
                 <property name="selectionMode">
                  <enum>QAbstractItemView::ExtendedSelection</enum>
                 </property>
                 <property name="columnCount">
-                 <number>2</number>
+                 <number>1</number>
                 </property>
                 <column>
                  <property name="text">
                   <string>Categories</string>
                  </property>
                 </column>
-                <column>
-                 <property name="text">
-                  <string>Dbus</string>
-                 </property>
-                </column>
-                <item>
-                 <property name="text">
-                  <string>Inbox</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Sent</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Drafts</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Unknown</string>
-                 </property>
-                </item>
-                <item>
-                 <property name="text">
-                  <string>Autodeletes</string>
-                 </property>
-                </item>
                </widget>
               </item>
               <item>
-               <widget class="QGroupBox" name="msgDisplay">
-                <property name="title">
-                 <string>Message</string>
+               <widget class="QPushButton" name="buttonView">
+                <property name="text">
+                 <string>View Autodeletes</string>
                 </property>
-                <layout class="QHBoxLayout" name="horizontalLayout_6">
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="msgDisplay">
+              <property name="title">
+               <string>Message</string>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_6">
+               <item>
+                <layout class="QVBoxLayout" name="verticalLayout">
                  <item>
-                  <layout class="QVBoxLayout" name="verticalLayout">
+                  <layout class="QHBoxLayout" name="horizontalLayout_5">
                    <item>
-                    <layout class="QHBoxLayout" name="horizontalLayout_5">
-                     <item>
-                      <widget class="QLabel" name="label_3">
-                       <property name="text">
-                        <string>From:</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLineEdit" name="from">
-                       <property name="readOnly">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QPushButton" name="buttonAutoDelete">
-                       <property name="enabled">
-                        <bool>true</bool>
-                       </property>
-                       <property name="toolTip">
-                        <string>Auto delete messages from this number.</string>
-                       </property>
-                       <property name="text">
-                        <string>Auto Delete</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
+                    <widget class="QLabel" name="label_3">
+                     <property name="text">
+                      <string>From:</string>
+                     </property>
+                    </widget>
                    </item>
                    <item>
-                    <layout class="QHBoxLayout" name="horizontalLayout_2">
-                     <item>
-                      <widget class="QLabel" name="label_7">
-                       <property name="text">
-                        <string>Storage: </string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QCheckBox" name="cbStorageMT">
-                       <property name="text">
-                        <string>MT</string>
-                       </property>
-                       <property name="checkable">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QCheckBox" name="cbStorageSim">
-                       <property name="text">
-                        <string>Sim</string>
-                       </property>
-                       <property name="checkable">
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <spacer name="horizontalSpacer_2">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>40</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_4">
-                       <property name="text">
-                        <string>Time: </string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QTimeEdit" name="smsTime">
-                       <property name="alignment">
-                        <set>Qt::AlignCenter</set>
-                       </property>
-                       <property name="readOnly">
-                        <bool>true</bool>
-                       </property>
-                       <property name="buttonSymbols">
-                        <enum>QAbstractSpinBox::NoButtons</enum>
-                       </property>
-                       <property name="specialValueText">
-                        <string>--:--</string>
-                       </property>
-                       <property name="displayFormat">
-                        <string>hh:mm</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QDateEdit" name="smsDate">
-                       <property name="enabled">
-                        <bool>true</bool>
-                       </property>
-                       <property name="frame">
-                        <bool>true</bool>
-                       </property>
-                       <property name="alignment">
-                        <set>Qt::AlignCenter</set>
-                       </property>
-                       <property name="readOnly">
-                        <bool>true</bool>
-                       </property>
-                       <property name="buttonSymbols">
-                        <enum>QAbstractSpinBox::NoButtons</enum>
-                       </property>
-                       <property name="specialValueText">
-                        <string>-- / -- / --</string>
-                       </property>
-                       <property name="dateTime">
-                        <datetime>
-                         <hour>0</hour>
-                         <minute>0</minute>
-                         <second>0</second>
-                         <year>1900</year>
-                         <month>1</month>
-                         <day>1</day>
-                        </datetime>
-                       </property>
-                       <property name="minimumDate">
-                        <date>
-                         <year>1900</year>
-                         <month>1</month>
-                         <day>1</day>
-                        </date>
-                       </property>
-                       <property name="currentSection">
-                        <enum>QDateTimeEdit::DaySection</enum>
-                       </property>
-                       <property name="displayFormat">
-                        <string>dd / MMM / yyyy</string>
-                       </property>
-                       <property name="date">
-                        <date>
-                         <year>1900</year>
-                         <month>1</month>
-                         <day>1</day>
-                        </date>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_8">
-                       <property name="text">
-                        <string/>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <spacer name="horizontalSpacer_3">
-                       <property name="orientation">
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>40</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="label_5">
-                       <property name="text">
-                        <string>SMS Center: </string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="smsc">
-                       <property name="text">
-                        <string>None</string>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item>
-                    <widget class="QTextEdit" name="smsContent">
+                    <widget class="QLineEdit" name="from">
                      <property name="readOnly">
                       <bool>true</bool>
                      </property>
                     </widget>
                    </item>
+                   <item>
+                    <widget class="QPushButton" name="buttonAutoDel">
+                     <property name="visible">
+                      <bool>false</bool>
+                     </property>
+                     <property name="toolTip">
+                      <string>Auto delete messages from this number.</string>
+                     </property>
+                     <property name="text">
+                      <string>Auto Delete</string>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
                  </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_2">
+                   <item>
+                    <widget class="QLabel" name="label_7">
+                     <property name="text">
+                      <string>Storage: </string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="cbStorageME">
+                     <property name="toolTip">
+                      <string>Memory Storage</string>
+                     </property>
+                     <property name="text">
+                      <string>ME</string>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QCheckBox" name="cbStorageSM">
+                     <property name="toolTip">
+                      <string>SIM Storage</string>
+                     </property>
+                     <property name="text">
+                      <string>SM</string>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_2">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_4">
+                     <property name="text">
+                      <string>Time: </string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QTimeEdit" name="smsTime">
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                     <property name="readOnly">
+                      <bool>true</bool>
+                     </property>
+                     <property name="buttonSymbols">
+                      <enum>QAbstractSpinBox::NoButtons</enum>
+                     </property>
+                     <property name="specialValueText">
+                      <string>--:--</string>
+                     </property>
+                     <property name="displayFormat">
+                      <string>hh:mm</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QDateEdit" name="smsDate">
+                     <property name="enabled">
+                      <bool>true</bool>
+                     </property>
+                     <property name="frame">
+                      <bool>true</bool>
+                     </property>
+                     <property name="alignment">
+                      <set>Qt::AlignCenter</set>
+                     </property>
+                     <property name="readOnly">
+                      <bool>true</bool>
+                     </property>
+                     <property name="buttonSymbols">
+                      <enum>QAbstractSpinBox::NoButtons</enum>
+                     </property>
+                     <property name="specialValueText">
+                      <string>-- / -- / --</string>
+                     </property>
+                     <property name="dateTime">
+                      <datetime>
+                       <hour>0</hour>
+                       <minute>0</minute>
+                       <second>0</second>
+                       <year>1900</year>
+                       <month>1</month>
+                       <day>1</day>
+                      </datetime>
+                     </property>
+                     <property name="minimumDate">
+                      <date>
+                       <year>1900</year>
+                       <month>1</month>
+                       <day>1</day>
+                      </date>
+                     </property>
+                     <property name="currentSection">
+                      <enum>QDateTimeEdit::DaySection</enum>
+                     </property>
+                     <property name="displayFormat">
+                      <string>dd / MMM / yyyy</string>
+                     </property>
+                     <property name="date">
+                      <date>
+                       <year>1900</year>
+                       <month>1</month>
+                       <day>1</day>
+                      </date>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_8">
+                     <property name="text">
+                      <string/>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="horizontalSpacer_3">
+                     <property name="orientation">
+                      <enum>Qt::Horizontal</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>40</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                    </spacer>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_5">
+                     <property name="text">
+                      <string>SMS Center: </string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="smsc">
+                     <property name="text">
+                      <string>None</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <widget class="QTextEdit" name="smsContent">
+                   <property name="readOnly">
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
                 </layout>
-               </widget>
-              </item>
-             </layout>
+               </item>
+              </layout>
+             </widget>
             </item>
            </layout>
           </item>
          </layout>
         </widget>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="Status">
+        <property name="text">
+         <string/>
+        </property>
        </widget>
       </item>
      </layout>
@@ -1682,6 +1672,23 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>ModemLister</class>
+   <extends>QComboBox</extends>
+   <header>modemlister.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SMSLister</class>
+   <extends>QTreeWidget</extends>
+   <header>smslister.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Propui</class>
+   <extends>QLabel</extends>
+   <header location="global">propui.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

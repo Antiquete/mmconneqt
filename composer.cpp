@@ -25,7 +25,7 @@ void composer::process(QAbstractButton* b)
     else if(b == gui->buttonBox->button(QDialogButtonBox::Save))
         emit saveSMS(gui->number->text(), gui->message->document()->toPlainText());
 
-    this->destroy();
+    this->hide();
 }
 
 composer::composer(QWidget *parent) : QDialog(parent), gui(new Ui::composer)
@@ -44,6 +44,11 @@ composer::~composer()
 void composer::setNumber(QString num)
 {
     gui->number->setText(num);
+}
+
+void composer::setMessage(QString msg)
+{
+    gui->message->setText(msg);
 }
 
 void composer::focusMessage()
