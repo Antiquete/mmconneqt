@@ -59,6 +59,9 @@ Thumbs.db
 *.vcxproj
 *vcxproj.*
 
+# VS Code generated files
+.vscode
+
 # MinGW generated files
 *.Debug
 *.Release
@@ -71,3 +74,5 @@ Thumbs.db
 *.dll
 *.exe
 
+# Build files
+build
