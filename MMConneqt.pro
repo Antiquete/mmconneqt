@@ -18,28 +18,28 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    autodeletes.cpp \
-    composer.cpp \
-    core.cpp \
-    main.cpp \
-    mainwindow.cpp \
-    propui.cpp
+    src/autodeletes.cpp \
+    src/composer.cpp \
+    src/core.cpp \
+    src/main.cpp \
+    src/mainwindow.cpp \
+    src/propui.cpp
 
 HEADERS += \
-    autodeletes.h \
-    composer.h \
-    core.h \
-    mainwindow.h \
-    modem.h \
-    modemlister.h \
-    propui.h \
-    sms.h \
-    smslister.h
+    src/autodeletes.h \
+    src/composer.h \
+    src/core.h \
+    src/mainwindow.h \
+    src/modem.h \
+    src/modemlister.h \
+    src/propui.h \
+    src/sms.h \
+    src/smslister.h
 
 FORMS += \
-    autodeletes.ui \
-    composer.ui \
-    mainwindow.ui
+    src/autodeletes.ui \
+    src/composer.ui \
+    src/mainwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
@@ -47,4 +47,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    res.qrc
+    src/res.qrc
+
+DISTFILES += \
+    COPYING \
+    README.md

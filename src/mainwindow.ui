@@ -1676,17 +1676,17 @@
   <customwidget>
    <class>ModemLister</class>
    <extends>QComboBox</extends>
-   <header>modemlister.h</header>
+   <header>src/modemlister.h</header>
   </customwidget>
   <customwidget>
    <class>SMSLister</class>
    <extends>QTreeWidget</extends>
-   <header>smslister.h</header>
+   <header>src/smslister.h</header>
   </customwidget>
   <customwidget>
    <class>Propui</class>
    <extends>QLabel</extends>
-   <header location="global">propui.h</header>
+   <header location="global">src/propui.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
