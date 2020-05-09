@@ -1,8 +1,13 @@
+<!-- @format -->
+
 # MMConneqt
 
 ## Description
 
 A qt based gui for Modem Manager.
+
+![alt text](docs/screenshots/mmconneqt_scr_1.png)
+![alt text](docs/screenshots/mmconneqt_scr_2.png)
 
 ### Features
 
@@ -22,7 +27,8 @@ A qt based gui for Modem Manager.
 ## Build
 
 Compile
-_______
+
+---
 
 ```sh
 git clone https://gitlab.com/Antiquete/mmconneqt
@@ -33,7 +39,8 @@ make
 ```
 
 Run
-___
+
+---
 
 ```sh
 ./MMConneqt
