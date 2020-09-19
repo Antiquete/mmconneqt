@@ -27,7 +27,6 @@
 #include "modem.h"
 #include "sms.h"
 
-
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -47,6 +46,7 @@ private:
     composer *cw = new composer();
     Autodeletes *aw = new Autodeletes();
 
+    void initSysTray();
     void initUi();
 
 private slots:
@@ -70,5 +70,10 @@ private slots:
 
     // Notification Slots
     void setStatus(QString, int);
+
+    // SysTray Slots
+    void openModemViewer();
+    void openMessageViewer();
+    void quit();
 };
 #endif // MAINWINDOW_H

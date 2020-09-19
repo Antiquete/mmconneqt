@@ -25,12 +25,12 @@ void stub(QString caller, QString message)
 }
 void Notify(QString title, QString msg)
 {
-    if(sysIco == nullptr)
+    if(sysTray == nullptr)
     {
-        sysIco = new QSystemTrayIcon(QIcon(ICON_FILE));
-        sysIco->show();
+        sysTray = new QSystemTrayIcon(QIcon(ICON_FILE));
+        sysTray->show();
     }
-    sysIco->showMessage(title, msg);
+    sysTray->showMessage(title, msg);
 }
 
 // Handle Autodelete Storage

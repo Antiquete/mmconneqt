@@ -20,7 +20,7 @@
 
 MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWindow)
 {
-
+    this->initSysTray();
     ui->setupUi(this);
 
     // Connections: ModemLister -> MainWindow
@@ -58,9 +58,27 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent), ui(new Ui::MainWi
 }
 MainWindow::~MainWindow()
 {
-    delete sysIco;
     delete ui;
 }
+void MainWindow::initSysTray()
+{
+    sysTray = new QSystemTrayIcon(QIcon(ICON_FILE));
+
+    connect(sysTray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(show()));
+
+    sysContext = new QMenu();
+    sysContext->addAction("Modem Viewer", this, SLOT(openModemViewer()));
+    sysContext->addAction("Message Viewer", this, SLOT(openMessageViewer()));
+    sysContext->addSeparator();
+    // sysContext->addAction("Notifications");
+    // sysContext->addAction("Settings");
+    sysContext->addSeparator();
+    sysContext->addAction("Exit", this, SLOT(quit()));
+    sysTray->setContextMenu(sysContext);
+
+    sysTray->show();
+}
+
 void MainWindow::initUi()
 {
     this->ui->cbStorageME->setAttribute(Qt::WA_TransparentForMouseEvents);
@@ -282,4 +300,22 @@ void MainWindow::onAutoDelClicked()
 void MainWindow::setStatus(QString text, int timeout)
 {
     stub("MainWindow::setStatus");
+}
+
+// SysTray
+void MainWindow::openModemViewer()
+{
+    this->ui->tabWidget->setCurrentIndex(0);
+    this->show();
+}
+void MainWindow::openMessageViewer()
+{
+    this->ui->tabWidget->setCurrentIndex(1);
+    this->show();
+}
+void MainWindow::quit()
+{
+    delete sysContext;
+    delete sysTray;
+    this->quit();
 }

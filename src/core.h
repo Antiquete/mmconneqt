@@ -33,6 +33,7 @@
 // Other Interfaces
 #include <QSettings>
 #include <QSystemTrayIcon>
+#include <QMenu>
 
 // Debugging Includes
 #include <QDebug>
@@ -47,8 +48,10 @@ extern void addAutoDelete(QString num);
 extern void removeAutoDelete(QString num);
 
 // Notifications
-const QString ICON_FILE=":/icon.png";
-static QSystemTrayIcon *sysIco = nullptr;
+const QString ICON_FILE_SCALABLE=":/icons/icon.svg";
+const QString ICON_FILE=":/icons/icon.png";
+static QSystemTrayIcon *sysTray = nullptr;
+static QMenu *sysContext = nullptr;
 
 extern void stub(QString caller, QString message="");
 extern void Notify(QString title, QString msg);

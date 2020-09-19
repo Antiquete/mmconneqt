@@ -22,11 +22,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-
-    sysIco = new QSystemTrayIcon(QIcon(ICON_FILE));
-    sysIco->show();
-
-    a.setWindowIcon(QIcon(":/icons/icon.svg"));
+    a.setWindowIcon(QIcon(ICON_FILE_SCALABLE));
 
     MainWindow w;
     w.show();
