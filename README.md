@@ -11,7 +11,7 @@ A qt based wrapper gui for Modem Manager.
 
 ### Features
 
-- Live Notification for incoming SMS
+- Live Notifications for incoming SMS
 - Live Notifications for modem plugged in status
 - Modem Viewer
   - View Modem information (Device, Name, Manufacturer, IMEI, IMSI, etc..)
