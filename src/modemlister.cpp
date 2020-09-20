@@ -104,6 +104,7 @@ void ModemLister::removeModem(const QDBusObjectPath& op)
             Notify("Modem Disconnected: ", this->currentText());
             if(i == this->currentIndex())
                 this->selectModem(i-1);
+            disconnect(m);
             delete m;
             this->removeItem(i);
             this->modemDisconnected(op.path());

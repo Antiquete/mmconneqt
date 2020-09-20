@@ -120,9 +120,6 @@ void SMSLister::deleteListed(QList<QTreeWidgetItem*> itms)
 
 void SMSLister::setModem(Modem *m)
 {
-    if(modem != nullptr)
-        disconnect(modem, SIGNAL(newSMS(QString)), this, SLOT(onSMSReceive(QString)));
-
     this->modem = m;
     this->clear();
 
