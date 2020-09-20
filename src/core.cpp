@@ -17,6 +17,9 @@
 
 #include "core.h"
 
+QSystemTrayIcon *sysTray = nullptr;
+QMenu *sysContext = nullptr;
+
 void stub(QString caller, QString message)
 {
     if(message == "")
