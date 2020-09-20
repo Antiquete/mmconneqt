@@ -22,7 +22,7 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
-    a.setWindowIcon(QIcon(ICON_FILE_SCALABLE));
+    a.setWindowIcon(QIcon(ICON_FILE));
 
     MainWindow w;
     w.show();
