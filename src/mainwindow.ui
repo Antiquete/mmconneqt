@@ -374,16 +374,25 @@
             </item>
             <item>
              <widget class="QRadioButton" name="rbProp_3gpp">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="focusPolicy">
                <enum>Qt::NoFocus</enum>
               </property>
               <property name="text">
                <string>GSM</string>
               </property>
+              <property name="checkable">
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
             <item>
              <widget class="QRadioButton" name="rbProp_cdma">
+              <property name="enabled">
+               <bool>false</bool>
+              </property>
               <property name="focusPolicy">
                <enum>Qt::NoFocus</enum>
               </property>
