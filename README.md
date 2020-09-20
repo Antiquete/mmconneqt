@@ -1,6 +1,6 @@
 <!-- @format -->
 
-# MMConneqt
+# <img src="src/icon.png" width="64">MMConneqt
 
 ## Description
 
