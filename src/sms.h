@@ -37,80 +37,22 @@ private:
     QTreeWidgetItem *_refItem = nullptr;
 
 
-    void setCategory(int pdu, int state)
-    {
-        switch (pdu)
-        {
-        case 2:                         //PDU - Submit
-        case 5:                         //PDU - CDMA Submit
-         if(state == 5)                 //State - Sent
-             category = Sent;
-         else
-             category = Drafts;
-            break;
-
-        default:
-            if(state == 3)              //State - Received
-                category = Inbox;
-            else
-                category = Unknown;
-        }
-    }
+    void setCategory(int pdu, int state);
 
 public:
     QString dbusPath;
     SMSFilter category;
 
-    SMS(QString dbusPath) : dbusPath(dbusPath)
-    {
-        properties = new MMDbusInterface(dbusPath, MM_PROPERTIES_INTERFACE);
+    SMS(QString dbusPath);
+    ~SMS();
 
-
-        int pdu = get("PduType").value<int>();
-        int state = get("State").value<int>();
-
-        setCategory(pdu, state);
-
-        properties->connect("PropertiesChanged", this, SLOT(onPropChange(QString, QMap<QString, QVariant>, QStringList)));
-    }
-    ~SMS()
-    {
-        properties->disconnect("PropertiesChanged", this, SLOT(onPropChange(QString, QMap<QString, QVariant>, QStringList)));
-        delete properties;
-    }
-
-    void setRef(QTreeWidgetItem *ref)
-    {
-        _refItem = ref;
-    }
-
-    QVariant get(const char* name)
-    {
-        QDBusReply<QVariant> prop = this->properties->call("Get",
-                                                           QVariant::fromValue<QString>("org.freedesktop.ModemManager1.Sms"),
-                                                           QVariant::fromValue<QString>(name));
-        return prop.value();
-    }
-
-    QString getString(const char* name)
-    {
-        return get(name).value<QString>();
-    }
-
-    void send()
-    {
-        MMDbusInterface smsInterface(this->dbusPath, MM_SMS_INTERFACE);
-        smsInterface.call("Send");
-    }
+    void setRef(QTreeWidgetItem *ref);
+    QVariant get(const char* name);
+    QString getString(const char* name);
+    void send();
 
 private slots:
-    void onPropChange(QString interface, QMap<QString, QVariant> changes, QStringList invalidated)
-    {
-        if(_refItem == nullptr)
-            qDebug() << "ref is set to nullptr, unsafe use detected!";
-
-        moveMessage(this->dbusPath, _refItem);
-    }
+    void onPropChange(QString interface, QMap<QString, QVariant> changes, QStringList invalidated);
 
 signals:
     void moveMessage(QString, QTreeWidgetItem*);

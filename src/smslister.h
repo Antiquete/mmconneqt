@@ -41,238 +41,39 @@ private:
     Modem *modem = nullptr;
     QSettings *smsDb;
 
-    SMS* smsObject(QTreeWidgetItem *it)
-    {
-        return it->data(0, Qt::UserRole).value<SMS*>();
-    }
+    SMS* smsObject(QTreeWidgetItem *it);
 
-    void initUi()
-    {
-        this->addTopLevelItem(new QTreeWidgetItem(QStringList() << "Inbox"));
-        this->addTopLevelItem(new QTreeWidgetItem(QStringList() << "Sent"));
-        this->addTopLevelItem(new QTreeWidgetItem(QStringList() << "Drafts"));
-        this->addTopLevelItem(new QTreeWidgetItem(QStringList() << "Unknown"));
-    }
-    void initMessages()
-    {
-        QDBusReply<QList<QDBusObjectPath>> smsList = modem->interface(Mt::Messaging)->call("List");
-        for(const auto& it:smsList.value())
-        {
-            addSMS(it.path());
-        }
-    }
-    void addSMS(QString dbusPath)
-    {
-        // Create SMS
-        SMS *s = new SMS(dbusPath);
-        QString num = s->get("Number").value<QString>();
-
-        QTreeWidgetItem *itm = new QTreeWidgetItem(QStringList() << num);
-        itm->setData(0, Qt::UserRole, QVariant::fromValue(s));
-
-        // Handle Read/Unread Status.
-        if(s->category == Inbox)
-        {
-            if(isRead(itm))
-                setRead(itm);
-            else
-                setUnread(itm);
-        }
-
-        // Connect signals
-        connect(s, SIGNAL(moveMessage(QString, QTreeWidgetItem*)), this, SLOT(onSMSMove(QString, QTreeWidgetItem*)));
-
-        // Add SMS to TreeWidget
-        this->topLevelItem(s->category)->addChild(itm);
-
-        // Add reference of TreeWidgetItem back to SMS
-        s->setRef(itm);
-
-        // Handle Auto Deletion (After entry added to TreeWidget)
-        if(getAutoDeletes().contains(num))
-            deleteSMS(itm);
-    }
-    void deleteSMS(QTreeWidgetItem *it)
-    {
-        setUnread(it);
-        SMS *s = smsObject(it);
-        modem->interface(Mt::Messaging)->call("Delete", QVariant::fromValue(QDBusObjectPath(s->dbusPath)));
-        delete s;
-
-        it->parent()->removeChild(it);
-        delete it;
-    }
-    bool isRead(QTreeWidgetItem *it)
-    {
-        // Default everything unread
-        return smsDb->value(smsObject(it)->dbusPath, false).toBool();
-    }
-    void setRead(QTreeWidgetItem *it)
-    {
-        // Normal style for read messages, store read status
-        it->setForeground(0, QBrush());
-        smsDb->setValue(smsObject(it)->dbusPath, true);
-    }
-    void setUnread(QTreeWidgetItem *it)
-    {
-        // Colored unread message, remove read status
-        it->setForeground(0, QBrush(Qt::red));
-        smsDb->remove(smsObject(it)->dbusPath);
-    }
-
+    void initUi();
+    void initMessages();
+    void addSMS(QString dbusPath);
+    void deleteSMS(QTreeWidgetItem *it);
+    bool isRead(QTreeWidgetItem *it);
+    void setRead(QTreeWidgetItem *it);
+    void setUnread(QTreeWidgetItem *it);
 public:
     SelectState SelectionType = SelectState::None;
 
-    SMS* selectedSMS()
-    {
-        return this->selectedItems().first()->data(0, Qt::UserRole).value<SMS*>();
-    }
-    QString category(SMSFilter sfilter)
-    {
-        return this->topLevelItem(sfilter)->text(0);
-    }
+    SMS* selectedSMS();
+    QString category(SMSFilter sfilter);
 
-    SMSLister(QWidget *parent = nullptr):
-        smsDb(new QSettings("MMConneqt", "Messaging"))
-    {
-        connect(this, SIGNAL(itemSelectionChanged()), this, SLOT(onItemSelect()));
-    }
+    SMSLister(QWidget *parent = nullptr);
 
-    void deleteListed(QList<QTreeWidgetItem*> itms)
-    {
-        for(const auto& it : itms)
-            deleteSMS(it);
-    }
+    void deleteListed(QList<QTreeWidgetItem*> itms);
 
 
 public slots:
-    void setModem(Modem *m)
-    {
-        if(modem != nullptr)
-            disconnect(modem, SIGNAL(newSMS(QString)), this, SLOT(onSMSReceive(QString)));
-
-        this->modem = m;
-        this->clear();
-
-        this->initUi();
-        this->initMessages();
-
-        connect(modem, SIGNAL(newSMS(QString)), this, SLOT(onSMSReceive(QString)));
-    }
-    void clearMessages()
-    {
-        for(int i=0; i<this->topLevelItemCount(); i++)
-        {
-            for(const auto& it:this->topLevelItem(i)->takeChildren())
-            {
-                delete it->data(0, Qt::UserRole).value<SMS*>();
-            }
-        }
-        this->clear();
-    }
+    void setModem(Modem *m);
+    void clearMessages();
 
     //Messaging Actions Slots
-    void saveSendSMS(QString number, QString content)
-    {
-        SMS s(saveSMS(number,content));
-        s.send();
-    }
-    QString saveSMS(QString number, QString content)
-    {
-        QMap<QString, QVariant> message;
-        message["number"] = number;
-        message["text"] = content;
-
-        QDBusReply<QDBusObjectPath> smsOP = modem->interface(Mt::Messaging)->call("Create", message);
-
-        if(!smsOP.isValid())
-            qDebug() << "smsLister::saveSMS(): Failed." << message << "\n" << smsOP.error();
-
-        return smsOP.value().path();
-    }
-    void deleteSelection()
-    {
-        switch (SelectionType)
-        {
-        case SelectState::SingleSelect:
-            deleteSMS(this->selectedItems().first());
-            break;
-
-        case SelectState::MultiSelect:
-            for(const auto& it : this->selectedItems())
-                if(it->parent())
-                    deleteSMS(it);
-            break;
-
-        case SelectState::FilterSelect:
-            while(this->selectedItems().first()->childCount() != 0)
-                deleteSMS(this->selectedItems().first()->child(0));
-            break;
-
-        default:
-            break;
-        }
-    }
+    void saveSendSMS(QString number, QString content);
+    QString saveSMS(QString number, QString content);
+    void deleteSelection();
 
 private slots:
-    void onItemSelect()
-    {
-        int selectedCount = this->selectedItems().count();
-        if(selectedCount > 1)
-        {
-            SelectionType = SelectState::MultiSelect;
-            QList<SMS*> slist;
-            for(const auto& it:this->selectedItems())
-            {
-                if(it->parent() != nullptr)
-                    slist.push_back(it->data(0, Qt::UserRole).value<SMS*>());
-            }
-
-            if(slist.count() >= 1)      /*Avoid crash in case two categories selected*/
-                multiSelected(slist);
-        }
-        else if(selectedCount == 1)
-        {
-            QTreeWidgetItem *it = this->selectedItems().first();
-            if(!it->parent())
-            {
-                SelectionType = SelectState::FilterSelect;
-                filterSelected(SMSFilter(this->indexOfTopLevelItem(it)));
-            }
-            else
-            {
-                SelectionType = SelectState::SingleSelect;
-                SMS *s = it->data(0, Qt::UserRole).value<SMS*>();
-                if(s->category == Inbox)
-                    setRead(it);
-                smsSelected(s);
-            }
-        }
-        else
-        {
-            SelectionType = SelectState::None;
-        }
-    }
-    void onSMSReceive(QString dbusPath)
-    {
-        addSMS(dbusPath);
-    }
-    void onSMSMove(QString dbusPath, QTreeWidgetItem *ref)
-    {
-        // Cleanup old
-        delete smsObject(ref);
-        ref->parent()->removeChild(ref);
-
-        // Setup new
-        addSMS(dbusPath);
-
-        // Notify in case Inbox
-        SMS s(dbusPath);
-        if(s.category == SMSFilter::Inbox)
-        {
-            Notify("New SMS Received from " + s.getString("Number"), s.getString("Text"));
-        }
-    }
+    void onItemSelect();
+    void onSMSReceive(QString dbusPath);
+    void onSMSMove(QString dbusPath, QTreeWidgetItem *ref);
 
 signals:
     void smsSelected(SMS*);

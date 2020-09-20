@@ -57,3 +57,32 @@ void removeAutoDelete(QString num)
     autodels.removeAll(num);
     setAutoDeletes(autodels);
 }
+
+// MMDbusInterface Class Functions
+MMDbusInterface::MMDbusInterface(QString path, QString interface) :
+    QDBusInterface(MM_SERVICE, path, interface, QDBusConnection::systemBus())
+{
+    qDBusRegisterMetaType<D_SV>();
+    qDBusRegisterMetaType<D_S_DSV>();
+    qDBusRegisterMetaType<D_OP_DSDSV>();
+}
+
+void MMDbusInterface::connect(QString signal, QObject *receiver, const char* slot)
+{
+    if(!QDBusConnection::systemBus().connect(this->service(), this->path(), this->interface(), signal, receiver, slot))
+        qDebug() << "Dbus connect() Failed: Service:"<< this->service() <<" Path:"<< this->path() << "Interface:" << this->interface() << " Signal:" << signal;
+}
+void MMDbusInterface::disconnect(QString signal, QObject *receiver, const char* slot)
+{
+    if(!QDBusConnection::systemBus().disconnect(this->service(), this->path(), this->interface(), signal, receiver, slot))
+        qDebug() << "Dbus disconnect() Failed: Signal:"<<signal;
+}
+
+// PropertiesInterface Class Functions
+QVariant PropertiesInterface::get(QString interface, QString name)
+{
+    QDBusReply<QVariant> prop = this->call("Get",
+                                           QVariant::fromValue<QString>(interface),
+                                           QVariant::fromValue<QString>(name));
+    return prop.value();
+}

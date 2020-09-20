@@ -45,89 +45,28 @@ private:
 
     MMDbusInterface *_interfaces[8];
 
-    // Functions
-    void initInterfaces()
-    {
-        Properties = new PropertiesInterface(this->dbusPath);
-
-        for(int i = Mt::Generic; i <= Mt::Voice; i++)
-        {
-            _interfaces[i] = new MMDbusInterface(this->dbusPath,
-                                                 interfacePath(static_cast<Mt>(i)));
-        }
-    }
-    void initConnections()
-    {
-        // Modem Signals
-        interface(Mt::Generic)->connect("StateChanged", this, SLOT(StateChanged(int, int, unsigned int)));
-
-
-        // Messaging Signals
-        interface(Mt::Messaging)->connect("Added", this, SLOT(smsAdded(const QDBusObjectPath&, bool)));
-        interface(Mt::Messaging)->connect("Deleted", this, SLOT(smsDeleted(const QDBusObjectPath&)));
-    }
-    void deleteConnections()
-    {
-        // Modem Signals
-        interface(Mt::Generic)->disconnect("StateChanged", this, SLOT(StateChanged(int, int, unsigned int)));
-
-
-        // Messaging Signals
-        interface(Mt::Messaging)->disconnect("Added", this, SLOT(smsAdded(const QDBusObjectPath&, bool)));
-        interface(Mt::Messaging)->disconnect("Deleted", this, SLOT(smsDeleted(const QDBusObjectPath&)));
-    }
-    void deleteInterfaces()
-    {
-        delete Properties;
-        for(int i = Mt::Generic; i <= Mt::Voice; i++)
-        {
-            delete _interfaces[i];
-        }
-    }
+    // Private Functions
+    void initInterfaces();
+    void initConnections();
+    void deleteConnections();
+    void deleteInterfaces();
 
 public:
     QString dbusPath;
     PropertiesInterface *Properties;
 
-    Modem(QString dbusPath) : dbusPath(dbusPath)
-    {
-        initInterfaces();
-        initConnections();
-    }
-    ~Modem()
-    {
-        deleteConnections();
-        deleteInterfaces();
-    }
+    Modem(QString dbusPath);
+    ~Modem();
 
-    MMDbusInterface *interface(Mt index)
-    {
-        return _interfaces[index];
-    }
-    QString interfacePath(Mt index)
-    {
-        return _interfacePaths[index];
-    }
-
-    QVariant get(QString name, Mt i)
-    {       
-        QDBusReply<QVariant> prop = this->Properties->call("Get",
-                                                           QVariant::fromValue<QString>(interface(i)->interface()),
-                                                           QVariant::fromValue<QString>(name));
-        return prop.value();
-    }
+    MMDbusInterface *interface(Mt index);
+    QString interfacePath(Mt index);
+    QVariant get(QString name, Mt i);
 
 private slots:
     // Dbus Signal Receivers
-    void StateChanged(int a, int b, unsigned int c){
-        stub("StateChanged", QString("Signal Received, Params a:%d, b:%d, c:%d").arg(a).arg(b).arg(c));
-    }
-    void smsAdded(const QDBusObjectPath& op, bool flag){
-        newSMS(op.path());
-    }
-    void smsDeleted(const QDBusObjectPath& op){
-        smsRemoved(op.path());
-    }
+    void StateChanged(int a, int b, unsigned int c);
+    void smsAdded(const QDBusObjectPath& op, bool flag);
+    void smsDeleted(const QDBusObjectPath& op);
 
 signals:
     void newSMS(QString dbusPath);

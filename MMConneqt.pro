@@ -23,7 +23,11 @@ SOURCES += \
     src/core.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
-    src/propui.cpp
+    src/modem.cpp \
+    src/modemlister.cpp \
+    src/propui.cpp \
+    src/sms.cpp \
+    src/smslister.cpp
 
 HEADERS += \
     src/autodeletes.h \

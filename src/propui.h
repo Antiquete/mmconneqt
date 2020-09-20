@@ -42,145 +42,21 @@ private:
                             "(ub)",
                          };
 
-    void hide(){
-        stub("Propui::hide");
-        this->setEnabled(false);
-        qDebug() << this->layout();
-    }
-
-    void setInt(int val)
-    {
-        this->setText(QString::number(val));
-    }
-    void setString(QString val)
-    {
-        this->setText(val);
-    }
-    void setStringList(QStringList val)
-    {
-        this->setText("[" + val.join(",") + "]");
-    }
-
-    void demarshall(QDBusArgument arg)
-    {
-        QString t = arg.currentSignature();
-
-        switch (_types.indexOf(t))
-        {
-        case ao:
-            demarshall_ao(arg);
-            break;
-
-        case a_s_su:
-            demarshall_a_s_su(arg);
-            break;
-
-        case s_uu:
-            demarshall_s_uu(arg);
-            break;
-
-        case s_ub:
-            demarshall_s_ub(arg);
-            break;
-
-        default:
-            qDebug() << "Type not handled: " + t;
-            this->setText("Unknown");
-        }
-    }
-
-    void demarshall_ao(const QDBusArgument &arg)
-    {
-        QStringList ops;
-        arg.beginArray();
-        while (!arg.atEnd())
-        {
-            QDBusObjectPath op;
-            arg >> op;
-            ops.push_back(op.path());
-        }
-        arg.endArray();
-        this->setText("[" + ops.join(",") + "]");
-    }
-
-    void demarshall_a_s_su(const QDBusArgument &arg)
-    {
-        QStringList entries;
-        arg.beginArray();
-        while (!arg.atEnd())
-        {
-            QString str;
-            uint u;
-            arg.beginStructure();
-            arg >> str >> u;
-            arg.endStructure();
-            entries.push_back(str + " (" + QString::number(u) + ")");
-        }
-        arg.endArray();
-        this->setText(entries.join(", "));
-    }
-
-    void demarshall_s_uu(const QDBusArgument &arg)
-    {
-        uint u1, u2;
-        arg.beginStructure();
-        arg >> u1 >> u2;
-        arg.endStructure();
-        this->setText(QString::number(u1) + ":" + QString::number(u2));
-    }
-
-    void demarshall_s_ub(const QDBusArgument &arg)
-    {
-        uint u;
-        bool b;
-        arg.beginStructure();
-        arg >> u >> b;
-        arg.endStructure();
-        this->setText(QString::number(u) + ": " + (b ? "True":"False"));
-    }
+    void hide();
+    void setInt(int val);
+    void setString(QString val);
+    void setStringList(QStringList val);
+    void demarshall(QDBusArgument arg);
+    void demarshall_ao(const QDBusArgument &arg);
+    void demarshall_a_s_su(const QDBusArgument &arg);
+    void demarshall_s_uu(const QDBusArgument &arg);
+    void demarshall_s_ub(const QDBusArgument &arg);
 
 public:
     Propui(QWidget *parent = nullptr) {}
 
 public slots:
-    void set(Modem* m)
-    {
-        QVariant variant = m->get(this->property("Target").value<QString>(),
-                                  static_cast<Mt>(this->property("TargetMt").value<QString>().toInt()));
-
-        switch (variant.userType())
-        {
-        case QMetaType::Int:
-        case QMetaType::UInt:
-        case QMetaType::LongLong:
-        case QMetaType::ULongLong:
-            setInt(variant.value<int>());
-            break;
-
-        case 1031:  // Object Path
-            setString(variant.value<QDBusObjectPath>().path());
-            break;
-
-        case QMetaType::QString:
-            setString(variant.value<QString>());
-            break;
-
-        case QMetaType::QStringList:
-            setStringList(variant.value<QStringList>());
-            break;
-
-        case 1029: // DBusArgument (Demarshall)
-            demarshall(variant.value<QDBusArgument>());
-            break;
-
-        default:
-            qDebug() << "Not Implemented: " << this->property("Target") << "-> Type:" << variant.userType();
-            this->setText("Not Found");
-            this->hide();
-        }
-    }
-
-
+    void set(Modem* m);
 };
 
 #endif // PROPUI_H

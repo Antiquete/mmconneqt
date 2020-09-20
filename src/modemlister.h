@@ -31,109 +31,21 @@ private:
     MMDbusInterface *ModemManager;
     Modem *currentModem = nullptr;
 
-    void initModems()
-    {
-        // Add default
-        this->addItem("None");
-
-        // Add all connected
-        QDBusMessage reply = ModemManager->call("GetManagedObjects");
-        const QDBusArgument &dbusArgs = reply.arguments().at( 0 ).value<QDBusArgument>();
-        D_OP_DSDSV modemList;
-        dbusArgs >> modemList;
-
-        D_OP_DSDSV::const_iterator it = modemList.constBegin();
-        auto end = modemList.constEnd();
-        while(it != end){
-            Modem *m = new Modem(it.key().path());
-
-            this->addItem(it.value()["org.freedesktop.ModemManager1.Modem"]["Model"].value<QString>(), QVariant::fromValue(m));
-            it++;
-        }
-    }
+    void initModems();
 
 public:
-    ModemLister(QWidget *parent = nullptr) :
-        ModemManager(new MMDbusInterface("/org/freedesktop/ModemManager1", "org.freedesktop.DBus.ObjectManager"))
-    {
-        initModems();
-        connect(this, SIGNAL(currentIndexChanged(int)), this, SLOT(onModemChange(int)));
+    ModemLister(QWidget *parent = nullptr);
+    ~ModemLister();
 
-        // Signal connections for dbus
-        ModemManager->connect("InterfacesAdded", this, SLOT(addModem(const QDBusObjectPath&, D_S_DSV)));
-        ModemManager->connect("InterfacesRemoved", this, SLOT(removeModem(const QDBusObjectPath&)));
-    }
-    ~ModemLister()
-    {
-        ModemManager->disconnect("InterfacesAdded", this, SLOT(addModem(const QDBusObjectPath&)));
-        ModemManager->disconnect("InterfacesRemoved", this, SLOT(removeModem(const QDBusObjectPath&)));
-    }
-
-    void setDefaultModem()
-    {
-        selectModem(this->count()-1);
-    }
-    void selectModem(int index)
-    {
-        this->setCurrentIndex(index);
-    }
+    void setDefaultModem();
+    void selectModem(int index);
 
 private slots:
-    void onModemChange(int index)
-    {
-        if(currentModem != nullptr)
-        {
-            currentModem->disconnect();
-            currentModem = nullptr;
-        }
-
-        if(index == 0)
-            modemUnloaded();
-        else
-        {
-            currentModem = this->currentData().value<Modem*>();
-            connect(currentModem, SIGNAL(newSMS(QString)), this, SLOT(onSMSReceive(QString)));
-            connect(currentModem, SIGNAL(smsRemoved(QString)), this, SLOT(onSMSDelete(QString)));
-            modemLoaded(currentModem);
-        }
-    }
-    void addModem(const QDBusObjectPath& op, D_S_DSV props)
-    {
-        Modem *m = new Modem(op.path());
-        this->addItem(props["org.freedesktop.ModemManager1.Modem"]["Model"].value<QString>(),
-                QVariant::fromValue(m));
-
-        modemConnected(m);
-        Notify("Modem Connected: ", props["org.freedesktop.ModemManager1.Modem"]["Model"].value<QString>());
-
-        if(this->count() == 2)
-            this->selectModem(1);
-    }
-    void removeModem(const QDBusObjectPath& op)
-    {
-        for(int i = 1; i<this->count(); i++)    //Start from 1 since first value is none
-        {
-            Modem *m = this->itemData(i).value<Modem*>();
-            if(m->dbusPath == op.path())
-            {
-                Notify("Modem Disconnected: ", this->currentText());
-                if(i == this->currentIndex())
-                    this->selectModem(i-1);
-                delete m;
-                this->removeItem(i);
-                modemDisconnected(op.path());
-                break;
-            }
-        }
-    }
-    void onSMSReceive(QString dbusPath)
-    {
-        smsReceived(new SMS(dbusPath));
-    }
-    void onSMSDelete(QString dbusPath)
-    {
-        smsDeleted(dbusPath);
-    }
+    void onModemChange(int index);
+    void addModem(const QDBusObjectPath& op, D_S_DSV props);
+    void removeModem(const QDBusObjectPath& op);
+    void onSMSReceive(QString dbusPath);
+    void onSMSDelete(QString dbusPath);
 
 signals:
     void modemConnected(Modem*);

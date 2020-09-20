@@ -71,24 +71,10 @@ Q_DECLARE_METATYPE(D_OP_DSDSV);
 class MMDbusInterface : public QDBusInterface{
     Q_OBJECT
 public:
-    MMDbusInterface(QString path, QString interface) :
-        QDBusInterface(MM_SERVICE, path, interface, QDBusConnection::systemBus())
-    {
-        qDBusRegisterMetaType<D_SV>();
-        qDBusRegisterMetaType<D_S_DSV>();
-        qDBusRegisterMetaType<D_OP_DSDSV>();
-    }
+    MMDbusInterface(QString path, QString interface);
 
-    void connect(QString signal, QObject *receiver, const char* slot)
-    {
-        if(!QDBusConnection::systemBus().connect(this->service(), this->path(), this->interface(), signal, receiver, slot))
-            qDebug() << "Dbus connect() Failed: Service:"<< this->service() <<" Path:"<< this->path() << "Interface:" << this->interface() << " Signal:" << signal;
-    }
-    void disconnect(QString signal, QObject *receiver, const char* slot)
-    {
-        if(!QDBusConnection::systemBus().disconnect(this->service(), this->path(), this->interface(), signal, receiver, slot))
-            qDebug() << "Dbus disconnect() Failed: Signal:"<<signal;
-    }
+    void connect(QString signal, QObject *receiver, const char* slot);
+    void disconnect(QString signal, QObject *receiver, const char* slot);
 };
 class PropertiesInterface : public MMDbusInterface{
     Q_OBJECT
@@ -96,13 +82,7 @@ public:
     PropertiesInterface(QString path) :
         MMDbusInterface(path, MM_PROPERTIES_INTERFACE) {}
 
-    QVariant get(QString interface, QString name)
-    {
-        QDBusReply<QVariant> prop = this->call("Get",
-                                               QVariant::fromValue<QString>(interface),
-                                               QVariant::fromValue<QString>(name));
-        return prop.value();
-    }
+    QVariant get(QString interface, QString name);
 };
 
 // MMCli Interfacing through Keys (Old)
